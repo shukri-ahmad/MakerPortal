@@ -27,21 +27,24 @@
     .tab-btn { background: #374151; color: #9ca3af; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: all 0.2s; white-space: nowrap; }
     .tab-btn.active { background: #2563eb; color: white; }
 
-    .stage { flex: 1; position: relative; overflow: hidden; background: #0b0f19; }
+    .stage { flex: 1; position: relative; overflow: hidden; background: #0b0f19; display: flex; flex-direction: column; }
     
     .view-panel { width: 100%; height: 100%; display: none; flex-direction: column; }
     .view-panel.active { display: flex; }
 
-    /* 1. Tutorial Swiper & Progress Bar (MOVED TO BOTTOM) */
+    /* 1. Tutorial Swiper & Bottom Progress Bar */
     .tutorial-footer { padding: 10px 15px; display: flex; align-items: center; gap: 15px; background: #1f2937; border-top: 1px solid #374151; flex-shrink: 0; }
+    .zoom-hint { color: #60a5fa; font-size: 0.75rem; font-weight: bold; white-space: nowrap; }
     .progress-bar-container { flex: 1; height: 8px; background: #374151; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { height: 100%; background: #4ade80; width: 0%; transition: width 0.3s ease; }
     #slide-counter { color: #9ca3af; font-size: 0.85rem; font-weight: bold; min-width: 80px; text-align: right; }
     
     .swiper { width: 100%; flex: 1; }
-    .swiper-slide { display: flex; align-items: center; justify-content: center; padding: 10px; }
+    .swiper-slide { display: flex; align-items: center; justify-content: center; padding: 10px; overflow: hidden; }
+    .swiper-zoom-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
     .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
-    .side-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(37, 99, 235, 0.45); color: #fff; border: 1px solid rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 20; }
+    
+    .side-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(37, 99, 235, 0.45); color: #fff; border: 1px solid rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 20; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
     .side-nav-prev { left: 15px; } .side-nav-next { right: 15px; }
 
     /* 2. Components List Panel */
@@ -67,7 +70,7 @@
     #makecode-wrapper { flex: 1; width: 100%; height: 100%; position: relative; display: flex; flex-direction: column; }
     
     /* Code Switcher */
-    .code-switcher { background: #1f2937; padding: 6px; text-align: center; border-bottom: 1px solid #374151; display: flex; justify-content: center; gap: 10px; align-items: center; }
+    .code-switcher { background: #1f2937; padding: 6px; text-align: center; border-bottom: 1px solid #374151; display: flex; justify-content: center; gap: 10px; align-items: center; flex-shrink: 0; }
     .code-toggle-btn { background: #374151; color: #9ca3af; border: none; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
     .code-toggle-btn.active { background: #d92525; color: white; box-shadow: 0 0 10px rgba(217, 37, 37, 0.4); }
   </style>
@@ -92,15 +95,16 @@
     <!-- PANEL 1: TUTORIAL GUIDE -->
     <div id="panel-tutorial" class="view-panel active">
       
-      <!-- IMAGE VIEWER AT THE TOP -->
-      <div style="position: relative; flex: 1; display: flex;">
+      <!-- IMAGE VIEWER (Fills remaining space) -->
+      <div style="position: relative; flex: 1; display: flex; overflow: hidden;">
         <button class="side-nav-btn side-nav-prev" onclick="swiper.slidePrev()">❮</button>
         <button class="side-nav-btn side-nav-next" onclick="swiper.slideNext()">❯</button>
         <div class="swiper" id="swiper-container"><div class="swiper-wrapper" id="swiper-wrapper"></div></div>
       </div>
 
-      <!-- PROGRESS BAR AT THE BOTTOM -->
+      <!-- PROGRESS BAR LOCKED AT THE BOTTOM -->
       <div class="tutorial-footer">
+        <span class="zoom-hint">🔍 Double-click to zoom</span>
         <div class="progress-bar-container">
           <div id="progress-bar-fill" class="progress-bar-fill"></div>
         </div>
@@ -184,7 +188,7 @@
       }
     }
 
-    // 1. Tutorial Engine with Progress Bar
+    // 1. Tutorial Engine (Now with Zoom/Pan & Bottom Progress Bar)
     function initTutorial() {
       const wrapper = document.getElementById('swiper-wrapper');
       if (!project.tutorialPages || !project.tutorialPages.length) {
@@ -195,12 +199,19 @@
       const totalSlides = project.tutorialPages.length;
       
       project.tutorialPages.forEach(url => {
-        wrapper.innerHTML += `<div class="swiper-slide"><img src="${url}"></div>`;
+        // Swiper requires the 'swiper-zoom-container' div directly inside 'swiper-slide' for zoom to work
+        wrapper.innerHTML += `
+          <div class="swiper-slide">
+            <div class="swiper-zoom-container">
+              <img src="${url}">
+            </div>
+          </div>`;
       });
       
       swiper = new Swiper('#swiper-container', { 
         speed: 400, 
         grabCursor: true,
+        zoom: true, // ENABLES ZOOM AND PAN
         on: {
           init: function () {
             updateProgressBar(this.activeIndex, totalSlides);
