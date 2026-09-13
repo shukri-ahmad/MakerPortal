@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MakerPortal | MAKERSPACE@UTHM</title>
   
-  <!-- BROWSER TAB LOGO (FAVICON) -->
   <link rel="icon" type="image/png" href="logo.png">
 
   <style>
@@ -22,7 +21,6 @@
       flex-direction: column;
     }
 
-    /* TOP ACCENT BAR */
     .top-accent {
       height: 4px;
       width: 100%;
@@ -30,7 +28,6 @@
       flex-shrink: 0;
     }
 
-    /* MAIN CONTAINER */
     main {
       padding: 2rem 1.5rem;
       flex: 1;
@@ -42,108 +39,42 @@
       align-items: center;
     }
     
-    /* HERO LOGO SECTION */
     .hero-container {
       text-align: center;
       margin-bottom: 2.5rem;
       width: 100%;
       max-width: 500px; 
     }
-    .hero-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
+    .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
 
-    /* PORTAL LOADING ANIMATION */
-    #loader {
-      text-align: center;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
+    /* LOADER ANIMATION */
+    #loader { text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .portal-animation { position: relative; width: 80px; height: 80px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
+    .portal-ring-outer { position: absolute; width: 100%; height: 100%; border: 3px dashed #1a8cff; border-radius: 50%; animation: spinOuter 6s linear infinite, pulseGlow 2s ease-in-out infinite alternate; }
+    .portal-ring-inner { position: absolute; width: 70%; height: 70%; border: 3px solid rgba(230, 0, 0, 0.6); border-top-color: #e60000; border-bottom-color: #e60000; border-radius: 50%; animation: spinInner 2s linear infinite; }
+    .portal-core { position: absolute; width: 30%; height: 30%; background: #1a8cff; border-radius: 50%; box-shadow: 0 0 20px #1a8cff, 0 0 40px #e60000; animation: corePulse 1.5s ease-in-out infinite alternate; }
+    .portal-text { color: #1a8cff; font-family: monospace; font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; animation: textBlink 1.5s linear infinite; }
 
-    .portal-animation {
-      position: relative;
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .portal-ring-outer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border: 3px dashed #1a8cff;
-      border-radius: 50%;
-      animation: spinOuter 6s linear infinite, pulseGlow 2s ease-in-out infinite alternate;
-    }
-
-    .portal-ring-inner {
-      position: absolute;
-      width: 70%;
-      height: 70%;
-      border: 3px solid rgba(230, 0, 0, 0.6);
-      border-top-color: #e60000;
-      border-bottom-color: #e60000;
-      border-radius: 50%;
-      animation: spinInner 2s linear infinite;
-    }
-
-    .portal-core {
-      position: absolute;
-      width: 30%;
-      height: 30%;
-      background: #1a8cff;
-      border-radius: 50%;
-      box-shadow: 0 0 20px #1a8cff, 0 0 40px #e60000;
-      animation: corePulse 1.5s ease-in-out infinite alternate;
-    }
-
-    .portal-text {
-      color: #1a8cff;
-      font-family: monospace;
-      font-size: 1rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      animation: textBlink 1.5s linear infinite;
-    }
-
-    @keyframes spinOuter {
-      0% { transform: rotate(0deg) scale(0.8); }
-      50% { transform: rotate(180deg) scale(1.1); }
-      100% { transform: rotate(360deg) scale(0.8); }
-    }
+    @keyframes spinOuter { 0% { transform: rotate(0deg) scale(0.8); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(0.8); } }
     @keyframes spinInner { 100% { transform: rotate(-360deg); } }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 10px #1a8cff, inset 0 0 10px #1a8cff; }
-      100% { box-shadow: 0 0 25px rgba(26, 140, 255, 0.8), inset 0 0 20px rgba(26, 140, 255, 0.8); }
-    }
-    @keyframes corePulse {
-      0% { transform: scale(0.8); opacity: 0.5; }
-      100% { transform: scale(1.3); opacity: 1; }
-    }
-    @keyframes textBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 10px #1a8cff, inset 0 0 10px #1a8cff; } 100% { box-shadow: 0 0 25px rgba(26, 140, 255, 0.8), inset 0 0 20px rgba(26, 140, 255, 0.8); } }
+    @keyframes corePulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.3); opacity: 1; } }
+    @keyframes textBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* SECTION STYLES */
+    .section-container { width: 100%; margin-bottom: 3rem; }
+    .section-title {
+      color: #f3f4f6;
+      border-bottom: 2px solid #333333;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    /* CATALOG GRID */
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      width: 100%;
-    }
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%; }
 
-    /* PROJECT CARDS */
     .project-card {
       background: #111111;
       border: 1px solid #333333;
@@ -155,76 +86,21 @@
       display: flex;
       flex-direction: column;
     }
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-      border-color: #1a8cff; 
-    }
-    .card-image {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      background: #0a0a0a;
-      border-bottom: 1px solid #333333;
-    }
-    .card-content {
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .card-content h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: #f9fafb;
-    }
-    .card-btn {
-      background: #1a8cff; 
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
+    .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
+    .card-image { width: 100%; height: 180px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
+    .card-content { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .card-content h3 { margin: 0; font-size: 1.1rem; color: #f9fafb; }
+    
+    .card-btn { background: #1a8cff; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
+    .btn-play { background: #e60000; } /* Special color for Game cards */
 
-    /* FOOTER */
     footer {
-      background: #050505;
-      border-top: 1px solid #1a1a1a;
-      padding: 1.5rem 1rem;
-      text-align: center;
-      margin-top: auto; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
+      background: #050505; border-top: 1px solid #1a1a1a; padding: 1.5rem 1rem; text-align: center; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
-    
-    .footer-text {
-      color: #6b7280;
-      font-size: 0.85rem;
-      letter-spacing: 0.5px;
-    }
-    
-    .footer-logo-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .footer-makerspace-logo {
-      height: 30px; 
-      width: auto;
-      border-radius: 4px;
-    }
-
-    .footer-brand {
-      color: #f3f4f6;
-      font-weight: bold;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-    }
+    .footer-text { color: #6b7280; font-size: 0.85rem; letter-spacing: 0.5px; }
+    .footer-logo-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .footer-makerspace-logo { height: 30px; width: auto; border-radius: 4px; }
+    .footer-brand { color: #f3f4f6; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
   </style>
 </head>
 <body>
@@ -245,9 +121,18 @@
       <div class="portal-text">Establishing Portal Link...</div>
     </div>
 
-    <div class="catalog-grid" id="catalog-grid">
-      <!-- Project cards will be injected here by JavaScript -->
+    <!-- BUILD HUB SECTION -->
+    <div class="section-container" id="build-section" style="display: none;">
+      <h2 class="section-title">⚙️ BUILD HUB</h2>
+      <div class="catalog-grid" id="build-grid"></div>
     </div>
+
+    <!-- GAME ARENA SECTION -->
+    <div class="section-container" id="game-section" style="display: none;">
+      <h2 class="section-title">🎮 GAME ARENA</h2>
+      <div class="catalog-grid" id="game-grid"></div>
+    </div>
+
   </main>
 
   <footer>
@@ -259,11 +144,11 @@
   </footer>
 
   <script>
-    // MAKE SURE THIS IS YOUR LATEST DEPLOYMENT URL
     const API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
     async function fetchCatalog() {
-      const grid = document.getElementById('catalog-grid');
+      const buildGrid = document.getElementById('build-grid');
+      const gameGrid = document.getElementById('game-grid');
       const loader = document.getElementById('loader');
 
       try {
@@ -271,26 +156,30 @@
         const projects = await response.json();
 
         sessionStorage.setItem('makerspace_projects', JSON.stringify(projects));
-
         loader.style.display = 'none';
 
         if (!projects || projects.length === 0) {
-          grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #9ca3af;">No projects found in the Drive folder.</p>';
+          buildGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #9ca3af;">No projects found in the Drive folder.</p>';
+          document.getElementById('build-section').style.display = 'block';
           return;
         }
 
-        // Generate the clickable cards with Smart Cover Fallback & Safe Error Catcher
         projects.forEach((project, index) => {
           let displayCover = project.coverUrl;
-          
-          // If no dedicated cover exists, use the first tutorial slide
           if (!displayCover && project.tutorialImages && project.tutorialImages.length > 0) {
             displayCover = project.tutorialImages[0].url;
           }
-          
-          // If the folder is completely empty or both fail, set up the placeholder string
           if (!displayCover) {
             displayCover = 'https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';
+          }
+
+          // SMART SORTING LOGIC
+          let isGame = false;
+          let displayTitle = project.title;
+          
+          if (displayTitle.toUpperCase().startsWith('[GAME]')) {
+            isGame = true;
+            displayTitle = displayTitle.substring(6).trim(); // Remove the [GAME] tag
           }
 
           const card = document.createElement('a');
@@ -298,14 +187,22 @@
           card.className = 'project-card';
           
           card.innerHTML = `
-            <img src="${displayCover}" alt="${project.title}" class="card-image" loading="lazy" 
+            <img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy" 
                  onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
             <div class="card-content">
-              <h3>${project.title}</h3>
-              <span class="card-btn">Build ➔</span>
+              <h3>${displayTitle}</h3>
+              <span class="card-btn ${isGame ? 'btn-play' : ''}">${isGame ? 'Play ➔' : 'Build ➔'}</span>
             </div>
           `;
-          grid.appendChild(card);
+          
+          // Place the card in the correct section and make sure that section is visible
+          if (isGame) {
+            gameGrid.appendChild(card);
+            document.getElementById('game-section').style.display = 'block';
+          } else {
+            buildGrid.appendChild(card);
+            document.getElementById('build-section').style.display = 'block';
+          }
         });
 
       } catch (error) {
