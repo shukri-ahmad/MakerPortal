@@ -125,11 +125,22 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // --- 3D STL PREVIEWER LOGIC (Powered by GitHub) ---
-    window.previewSTL = function(containerId, fileUrl) {
+    // --- SANITIZE FILENAMES FOR GITHUB PREVIEWS ---
+    function buildGitHubStlUrl(fileName) {
+      // 1. Remove leading/trailing spaces
+      let cleanName = fileName.trim();
+      
+      // 2. Safely encode URI components (handles spaces, brackets [], etc.)
+      const encoded = encodeURIComponent(cleanName);
+      
+      // 3. Return full GitHub Pages path
+      return `https://shukri-ahmad.github.io/makerobot/models/${encoded}`;
+    }
+
+    // --- 3D STL PREVIEWER LOGIC ---
+    window.previewSTL = function(containerId, primaryUrl, fallbackUrl) {
       const container = document.getElementById(containerId);
       
-      // If already open, close it to save memory
       if (container.style.height === '300px') {
         container.style.height = '0px';
         container.style.marginTop = '0px';
@@ -138,14 +149,10 @@
         return;
       }
       
-      // Open the container
       container.style.height = '300px';
       container.style.marginTop = '10px';
       container.style.border = '1px solid #333';
-      container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model from GitHub...</div>";
-      
-      // We load directly from your secure GitHub folder
-      const targetUrl = fileUrl;
+      container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Loading 3D Model...</div>";
       
       setTimeout(() => {
         const width = container.clientWidth;
@@ -169,7 +176,9 @@
         scene.add(light);
         
         const loader = new THREE.STLLoader();
-        loader.load(targetUrl, function (geometry) {
+        
+        // Helper renderer execution
+        function renderMesh(geometry) {
           const material = new THREE.MeshPhongMaterial({ color: 0x1a8cff, specular: 0x111111, shininess: 100 });
           const mesh = new THREE.Mesh(geometry, material);
           
@@ -194,10 +203,14 @@
             renderer.render(scene, camera);
           }
           animate();
-          
-        }, undefined, function (error) {
-          console.error("STL Load Error:", error);
-          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>File not found on GitHub. Make sure you uploaded the STL to the 'models' folder and the names match exactly!</div>";
+        }
+
+        // Try Primary URL (Exact name encoded)
+        loader.load(primaryUrl, renderMesh, undefined, function () {
+          // If primary fails, try Fallback URL (Spaces converted to underscores)
+          loader.load(fallbackUrl, renderMesh, undefined, function () {
+            container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>File not found in GitHub models folder. Make sure the file exists!</div>";
+          });
         });
       }, 350);
     };
@@ -289,25 +302,26 @@
         compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>';
       }
 
-      // 4. STL FILES (Smart GitHub Routing)
+      // 4. STL FILES (Smart Dual-Check Matcher)
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
           const containerId = 'stl-preview-' + index;
           
-    // Clean double spaces and build clean encoded URL
-    const cleanFileName = file.name.trim();
-    const githubPreviewUrl = `https://shukri-ahmad.github.io/makerobot/models/${encodeURIComponent(cleanFileName).replace(/%20/g, '%20')}`;
+          // Primary Target: Exact Encoded Name (e.g., MAKEROBOT%204WD%20TT%20FRONT.stl)
+          const primaryUrl = buildGitHubStlUrl(file.name);
+          
+          // Fallback Target: Spaces converted to Underscores (e.g., MAKEROBOT_4WD_TT_FRONT.stl)
+          const underscoreName = file.name.trim().replace(/\s+/g, '_');
+          const fallbackUrl = buildGitHubStlUrl(underscoreName);
 
           stlList.innerHTML += `
             <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <span style="font-weight: bold;">${file.name}</span>
                 <div style="display: flex; gap: 10px;">
-                  <!-- Preview button uses GitHub -->
-                  <button onclick="previewSTL('${containerId}', '${githubPreviewUrl}')" class="preview-btn">👁️ PREVIEW</button>
-                  <!-- Download button uses Google Drive -->
+                  <button onclick="previewSTL('${containerId}', '${primaryUrl}', '${fallbackUrl}')" class="preview-btn">👁️ PREVIEW</button>
                   <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️ STL</a>
                 </div>
               </div>
