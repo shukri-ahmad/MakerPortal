@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workbench | MakerPortal</title>
   
-  <!-- Swiper.js for the Tutorial Slides -->
+  <!-- Swiper.js for the Slides -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
   <style>
@@ -18,10 +18,9 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow: hidden; /* Keep the app layout locked */
+      overflow: hidden;
     }
 
-    /* TOP ACCENT & HEADER */
     .top-accent {
       height: 4px; width: 100%;
       background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000);
@@ -45,113 +44,33 @@
       font-size: 1.2rem;
     }
     
-    .project-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #f3f4f6;
-    }
+    .project-title { font-size: 1.2rem; font-weight: bold; color: #f3f4f6; }
 
-    /* TABS NAVIGATION */
     .tabs-nav {
-      display: flex;
-      background: #111111;
-      border-bottom: 2px solid #333333;
-      flex-shrink: 0;
-      overflow-x: auto; /* Allow scrolling on small screens */
+      display: flex; background: #111111; border-bottom: 2px solid #333333; flex-shrink: 0; overflow-x: auto;
     }
     
     .tab-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      color: #9ca3af;
-      padding: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-      min-width: 90px;
+      flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px;
     }
     
     .tab-btn:hover { color: #ffffff; background: #1a1a1a; }
-    
-    .tab-btn.active {
-      color: #1a8cff;
-      border-bottom-color: #1a8cff;
-      background: #0a0a0a;
-    }
+    .tab-btn.active { color: #1a8cff; border-bottom-color: #1a8cff; background: #0a0a0a; }
 
-    /* TAB CONTENT AREA */
-    .tab-content {
-      display: none;
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #000000;
-    }
-    
+    .tab-content { display: none; flex: 1; overflow-y: auto; padding: 20px; background: #000000; }
     .tab-content.active { display: block; }
 
-    /* SWIPER / TUTORIAL SPECIFIC */
-    .swiper {
-      width: 100%;
-      height: 100%;
-      background: #0a0a0a;
-      border-radius: 8px;
-    }
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .swiper-slide img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+    .swiper { width: 100%; height: 100%; background: #0a0a0a; border-radius: 8px; }
+    .swiper-slide { display: flex; justify-content: center; align-items: center; }
+    .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    /* GENERAL CONTENT STYLING */
-    .list-item {
-      background: #111111;
-      border: 1px solid #333333;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .list-item a {
-      color: #1a8cff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    pre {
-      white-space: pre-wrap;
-      font-family: inherit;
-      line-height: 1.6;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 8px;
-      background: white; /* Makecode usually needs white bg */
-    }
+    .list-item { background: #111111; border: 1px solid #333333; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .list-item a { color: #1a8cff; text-decoration: none; font-weight: bold; }
+    pre { white-space: pre-wrap; font-family: inherit; line-height: 1.6; }
+    iframe { width: 100%; height: 100%; border: none; border-radius: 8px; background: white; }
 
-    /* APP LAUNCHER BUTTON */
     .app-launch-btn {
-      display: inline-block;
-      background: #e60000;
-      color: white;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4);
-      margin-top: 20px;
-      transition: transform 0.2s;
+      display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); margin-top: 20px; transition: transform 0.2s;
     }
     .app-launch-btn:hover { transform: scale(1.05); }
     .app-panel { text-align: center; padding: 40px 20px; }
@@ -166,53 +85,38 @@
     <div class="project-title" id="project-title">Loading...</div>
   </header>
 
+  <!-- Added IDs to all tab buttons for dynamic control -->
   <div class="tabs-nav">
-    <button class="tab-btn active" onclick="switchTab('tutorial', this)">Tutorial</button>
-    <button class="tab-btn" onclick="switchTab('components', this)">Components</button>
-    <button class="tab-btn" onclick="switchTab('stl', this)">STL Files</button>
-    <button class="tab-btn" onclick="switchTab('makecode', this)">MakeCode</button>
+    <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
+    <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
+    <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
+    <button class="tab-btn" id="tab-btn-makecode" onclick="switchTab('makecode', this)">MakeCode</button>
     <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
   </div>
 
-  <!-- TUTORIAL PANEL -->
   <div id="tutorial" class="tab-content active" style="padding: 0;">
     <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="swiper-wrapper">
-        <!-- Slides injected by JS -->
-      </div>
+      <div class="swiper-wrapper" id="swiper-wrapper"></div>
       <div class="swiper-button-next" style="color: #1a8cff;"></div>
       <div class="swiper-button-prev" style="color: #1a8cff;"></div>
       <div class="swiper-pagination"></div>
     </div>
   </div>
 
-  <!-- COMPONENTS PANEL -->
-  <div id="components" class="tab-content">
-    <pre id="components-text">Loading...</pre>
-  </div>
+  <div id="components" class="tab-content"><pre id="components-text">Loading...</pre></div>
+  <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
+  <div id="makecode" class="tab-content" style="padding: 0;"><div id="makecode-container" style="height: 100%;">Loading...</div></div>
 
-  <!-- STL PANEL -->
-  <div id="stl" class="tab-content">
-    <div id="stl-list">Loading...</div>
-  </div>
-
-  <!-- MAKECODE PANEL -->
-  <div id="makecode" class="tab-content" style="padding: 0;">
-    <div id="makecode-container" style="height: 100%;">Loading...</div>
-  </div>
-
-  <!-- APP CONTROLLER PANEL -->
+  <!-- Added IDs to app content so we can change them for games -->
   <div id="app" class="tab-content app-panel">
-    <h2 style="color: #f3f4f6; margin-bottom: 10px;">Ready to Drive?</h2>
-    <p style="color: #9ca3af; margin-bottom: 20px;">Launch the Web Bluetooth controller to take command of your robot.</p>
+    <h2 id="app-heading" style="color: #f3f4f6; margin-bottom: 10px;">Ready to Drive?</h2>
+    <p id="app-desc" style="color: #9ca3af; margin-bottom: 20px;">Launch the Web Bluetooth controller to take command of your robot.</p>
     <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
   </div>
 
-  <!-- Swiper.js Script -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
   <script>
-    // Tab Switching Logic
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -221,14 +125,11 @@
       btnElement.classList.add('active');
     }
 
-    // Load Data on Startup
     window.onload = function() {
-      // 1. Get Project ID from URL (?id=0)
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
-
-      // 2. Load data from sessionStorage
       const cachedData = sessionStorage.getItem('makerspace_projects');
+      
       if (!cachedData || projectId === null) {
         document.getElementById('project-title').innerText = "Error: Project not found.";
         return;
@@ -237,29 +138,51 @@
       const projects = JSON.parse(cachedData);
       const project = projects[projectId];
 
-      // 3. Populate Title
-      document.getElementById('project-title').innerText = project.title;
+      // --- DETECT GAME MODE ---
+      let isGame = false;
+      let displayTitle = project.title;
+      
+      if (displayTitle.toUpperCase().startsWith('[GAME]')) {
+        isGame = true;
+        displayTitle = displayTitle.substring(6).trim(); 
+      }
+      document.getElementById('project-title').innerText = displayTitle;
 
-      // 4. Populate Tutorial Slides (Swiper)
+      // --- APPLY GAME UI CHANGES ---
+      if (isGame) {
+        // Rename Tutorial to Manual
+        document.getElementById('tab-btn-tutorial').innerText = 'Manual';
+        
+        // Hide unused robot tabs
+        document.getElementById('tab-btn-components').style.display = 'none';
+        document.getElementById('tab-btn-stl').style.display = 'none';
+        document.getElementById('tab-btn-makecode').style.display = 'none';
+
+        // Update App tab text for game management
+        document.getElementById('tab-btn-app').innerText = 'Game Management';
+        document.getElementById('app-heading').innerText = 'Game Management System';
+        document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
+        document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
+      }
+
+      // Populate Slides (Swiper)
       const swiperWrapper = document.getElementById('swiper-wrapper');
       if (project.tutorialImages && project.tutorialImages.length > 0) {
         project.tutorialImages.forEach(img => {
           swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${img.url}" alt="${img.name}"></div>`;
         });
-        // Initialize Swiper
         new Swiper(".mySwiper", {
           navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
           pagination: { el: ".swiper-pagination", clickable: true },
           keyboard: { enabled: true }
         });
       } else {
-        swiperWrapper.innerHTML = '<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No tutorial slides found.</div>';
+        swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
       }
 
-      // 5. Populate Components
+      // Populate Standard Robot Fields
       document.getElementById('components-text').innerText = project.components || "No components list found.";
-
-      // 6. Populate STL Files
+      
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
@@ -274,10 +197,8 @@
         stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>';
       }
 
-      // 7. Populate Makecode
       const mkContainer = document.getElementById('makecode-container');
       if (project.makecodeLinks && project.makecodeLinks.includes("http")) {
-        // Extract URL if it's mixed with text
         const urlMatch = project.makecodeLinks.match(/https?:\/\/[^\s]+/);
         if (urlMatch) {
           mkContainer.innerHTML = `<iframe src="${urlMatch[0]}"></iframe>`;
@@ -288,7 +209,7 @@
         mkContainer.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
       }
 
-      // 8. Populate APP Link (Dynamic visibility)
+      // Show App Link if available
       if (project.appLink && project.appLink.includes("http")) {
         document.getElementById('tab-btn-app').style.display = 'inline-block';
         document.getElementById('app-link-anchor').href = project.appLink;
