@@ -144,18 +144,16 @@
       container.style.border = '1px solid #333';
       container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model...</div>";
       
-      // Google Drive blocks direct 3D loading (CORS rule). We route it through a secure proxy.
-      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(fileUrl);
+      // FIX: Using a stronger proxy that handles Google Drive redirects better!
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(fileUrl);
       
-      // Wait for the container animation to finish before rendering
       setTimeout(() => {
         const width = container.clientWidth;
         const height = 300;
-        container.innerHTML = ""; // Clear loading text
+        container.innerHTML = ""; 
         
-        // 1. Setup Scene
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0a0a0a); // Dark background
+        scene.background = new THREE.Color(0x0a0a0a); 
         
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -165,26 +163,22 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         
-        // 2. Add Lighting
         scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5));
         const light = new THREE.DirectionalLight(0xffffff, 0.5);
         light.position.set(1, 1, 1);
         scene.add(light);
         
-        // 3. Load Model
         const loader = new THREE.STLLoader();
         loader.load(proxyUrl, function (geometry) {
           const material = new THREE.MeshPhongMaterial({ color: 0x1a8cff, specular: 0x111111, shininess: 100 });
           const mesh = new THREE.Mesh(geometry, material);
           
-          // Center the model dynamically
           geometry.computeBoundingBox();
           const box = geometry.boundingBox;
           const center = new THREE.Vector3();
           box.getCenter(center);
           mesh.position.sub(center);
           
-          // Zoom out based on object size
           const size = box.getSize(new THREE.Vector3()).length();
           camera.position.z = size * 1.5; 
           
@@ -192,18 +186,18 @@
           wrapper.add(mesh);
           scene.add(wrapper);
           
-          // 4. Animate Spin
           function animate() {
-            if (container.style.height === '0px') return; // Stop memory leak if closed
+            if (container.style.height === '0px') return; 
             requestAnimationFrame(animate);
-            wrapper.rotation.y += 0.01; // Spin speed
+            wrapper.rotation.y += 0.01; 
             controls.update();
             renderer.render(scene, camera);
           }
           animate();
           
         }, undefined, function (error) {
-          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>Failed to load preview. Please download directly.</div>";
+          console.error("STL Load Error:", error);
+          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>Security block from Google Drive. Please use the ⬇️ STL button.</div>";
         });
       }, 350);
     };
@@ -295,7 +289,7 @@
         compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>';
       }
 
-      // 4. STL FILES (Now with Preview Button!)
+      // 4. STL FILES
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
