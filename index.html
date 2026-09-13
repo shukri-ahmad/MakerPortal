@@ -279,7 +279,7 @@
           return;
         }
 
-        // Generate the clickable cards with Smart Cover Fallback
+        // Generate the clickable cards with Smart Cover Fallback & Safe Error Catcher
         projects.forEach((project, index) => {
           let displayCover = project.coverUrl;
           
@@ -288,7 +288,7 @@
             displayCover = project.tutorialImages[0].url;
           }
           
-          // If the folder is completely empty, use a placeholder
+          // If the folder is completely empty or both fail, set up the placeholder string
           if (!displayCover) {
             displayCover = 'https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';
           }
@@ -298,7 +298,8 @@
           card.className = 'project-card';
           
           card.innerHTML = `
-            <img src="${displayCover}" alt="${project.title}" class="card-image" loading="lazy">
+            <img src="${displayCover}" alt="${project.title}" class="card-image" loading="lazy" 
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
             <div class="card-content">
               <h3>${project.title}</h3>
               <span class="card-btn">Build ➔</span>
