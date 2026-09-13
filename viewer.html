@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workbench | MakerPortal</title>
   
-  <!-- Swiper.js for the Tutorial Slides -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
   <style>
@@ -18,10 +17,9 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow: hidden; /* Keep the app layout locked */
+      overflow: hidden;
     }
 
-    /* TOP ACCENT & HEADER */
     .top-accent {
       height: 4px; width: 100%;
       background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000);
@@ -38,123 +36,43 @@
       flex-shrink: 0;
     }
     
-    .back-btn {
-      color: #1a8cff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-    
-    .project-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #f3f4f6;
-    }
+    .back-btn { color: #1a8cff; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
+    .project-title { font-size: 1.2rem; font-weight: bold; color: #f3f4f6; }
 
-    /* TABS NAVIGATION */
     .tabs-nav {
-      display: flex;
-      background: #111111;
-      border-bottom: 2px solid #333333;
-      flex-shrink: 0;
-      overflow-x: auto; /* Allow scrolling on small screens */
+      display: flex; background: #111111; border-bottom: 2px solid #333333; flex-shrink: 0; overflow-x: auto;
     }
     
     .tab-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      color: #9ca3af;
-      padding: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-      min-width: 90px;
+      flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px;
     }
-    
     .tab-btn:hover { color: #ffffff; background: #1a1a1a; }
-    
-    .tab-btn.active {
-      color: #1a8cff;
-      border-bottom-color: #1a8cff;
-      background: #0a0a0a;
-    }
+    .tab-btn.active { color: #1a8cff; border-bottom-color: #1a8cff; background: #0a0a0a; }
 
-    /* TAB CONTENT AREA */
-    .tab-content {
-      display: none;
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #000000;
-    }
-    
+    .tab-content { display: none; flex: 1; overflow-y: auto; padding: 20px; background: #000000; }
     .tab-content.active { display: block; }
 
-    /* SWIPER / TUTORIAL SPECIFIC */
-    .swiper {
-      width: 100%;
-      height: 100%;
-      background: #0a0a0a;
-      border-radius: 8px;
-    }
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .swiper-slide img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+    .swiper { width: 100%; height: 100%; background: #0a0a0a; border-radius: 8px; }
+    .swiper-slide { display: flex; justify-content: center; align-items: center; }
+    .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    /* GENERAL CONTENT STYLING */
     .list-item {
-      background: #111111;
-      border: 1px solid #333333;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #111111; border: 1px solid #333333; padding: 15px; margin-bottom: 10px; border-radius: 6px; 
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
     }
-    .list-item a {
-      color: #1a8cff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    pre {
-      white-space: pre-wrap;
-      font-family: inherit;
-      line-height: 1.6;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 8px;
-      background: white; /* Makecode usually needs white bg */
-    }
+    .list-item a { color: #1a8cff; text-decoration: none; font-weight: bold; }
+    iframe { width: 100%; height: 100%; border: none; border-radius: 8px; background: white; }
 
-    /* APP LAUNCHER BUTTON */
     .app-launch-btn {
-      display: inline-block;
-      background: #e60000;
-      color: white;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4);
-      margin-top: 20px;
-      transition: transform 0.2s;
+      display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); margin-top: 20px; transition: transform 0.2s;
     }
     .app-launch-btn:hover { transform: scale(1.05); }
     .app-panel { text-align: center; padding: 40px 20px; }
+    
+    .buy-btn {
+      background: #1a8cff; color: white !important; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;
+    }
+    .buy-btn:hover { background: #0073e6; }
   </style>
 </head>
 <body>
@@ -174,45 +92,30 @@
     <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
   </div>
 
-  <!-- TUTORIAL PANEL -->
   <div id="tutorial" class="tab-content active" style="padding: 0;">
     <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="swiper-wrapper">
-        <!-- Slides injected by JS -->
-      </div>
+      <div class="swiper-wrapper" id="swiper-wrapper"></div>
       <div class="swiper-button-next" style="color: #1a8cff;"></div>
       <div class="swiper-button-prev" style="color: #1a8cff;"></div>
       <div class="swiper-pagination"></div>
     </div>
   </div>
 
-  <!-- COMPONENTS PANEL -->
-  <div id="components" class="tab-content">
-    <pre id="components-text">Loading...</pre>
-  </div>
+  <!-- Note: We removed the <pre> tag here so we can inject nice buttons! -->
+  <div id="components" class="tab-content">Loading...</div>
+  
+  <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
+  <div id="makecode" class="tab-content" style="padding: 0;"><div id="makecode-container" style="height: 100%;">Loading...</div></div>
 
-  <!-- STL PANEL -->
-  <div id="stl" class="tab-content">
-    <div id="stl-list">Loading...</div>
-  </div>
-
-  <!-- MAKECODE PANEL -->
-  <div id="makecode" class="tab-content" style="padding: 0;">
-    <div id="makecode-container" style="height: 100%;">Loading...</div>
-  </div>
-
-  <!-- APP CONTROLLER PANEL -->
   <div id="app" class="tab-content app-panel">
     <h2 id="app-heading" style="color: #f3f4f6; margin-bottom: 10px;">Ready to Drive?</h2>
     <p id="app-desc" style="color: #9ca3af; margin-bottom: 20px;">Launch the Web Bluetooth controller to take command of your robot.</p>
     <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
   </div>
 
-  <!-- Swiper.js Script -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
   <script>
-    // Tab Switching Logic
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -221,14 +124,11 @@
       btnElement.classList.add('active');
     }
 
-    // Load Data on Startup
     window.onload = function() {
-      // 1. Get Project ID from URL (?id=0)
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
-
-      // 2. Load data from sessionStorage
       const cachedData = sessionStorage.getItem('makerspace_projects');
+      
       if (!cachedData || projectId === null) {
         document.getElementById('project-title').innerText = "Error: Project not found.";
         return;
@@ -237,19 +137,15 @@
       const projects = JSON.parse(cachedData);
       const project = projects[projectId];
 
-      // --- NEW: DETECT GAME MODE ---
+      // 1. GAME MODE DETECTION
       let isGame = false;
       let displayTitle = project.title;
-      
       if (displayTitle.toUpperCase().startsWith('[GAME]')) {
         isGame = true;
         displayTitle = displayTitle.substring(6).trim(); 
       }
-      
-      // 3. Populate Title
       document.getElementById('project-title').innerText = displayTitle;
 
-      // --- NEW: APPLY GAME UI CHANGES ---
       if (isGame) {
         document.getElementById('tab-btn-tutorial').innerText = 'Manual';
         document.getElementById('tab-btn-components').style.display = 'none';
@@ -262,13 +158,12 @@
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
       }
 
-      // 4. Populate Tutorial Slides (Swiper)
+      // 2. TUTORIAL SLIDES
       const swiperWrapper = document.getElementById('swiper-wrapper');
       if (project.tutorialImages && project.tutorialImages.length > 0) {
         project.tutorialImages.forEach(img => {
           swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${img.url}" alt="${img.name}"></div>`;
         });
-        // Initialize Swiper
         new Swiper(".mySwiper", {
           navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
           pagination: { el: ".swiper-pagination", clickable: true },
@@ -278,10 +173,40 @@
         swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
       }
 
-      // 5. Populate Components
-      document.getElementById('components-text').innerText = project.components || "No components list found.";
+      // 3. COMPONENTS (New Smart Parser!)
+      const compContainer = document.getElementById('components');
+      if (project.components && project.components.trim() !== "") {
+        const lines = project.components.split('\n');
+        let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+        
+        lines.forEach(line => {
+          if (!line.trim()) return; // skip empty lines
+          
+          const parts = line.split('|');
+          if (parts.length >= 2) { // If it matches the format Name | Link | Price
+            const name = parts[0].trim();
+            const link = parts[1].trim();
+            const price = parts.length >= 3 ? parts[2].trim() : "";
+            
+            html += `
+              <div class="list-item">
+                <span style="flex: 1; font-weight: bold; color: #f3f4f6; min-width: 150px;">${name}</span>
+                <span style="color: #00cc44; font-weight: bold; margin-right: 15px;">${price}</span>
+                <a href="${link}" target="_blank" class="buy-btn">BUY NOW ➔</a>
+              </div>
+            `;
+          } else {
+            // Fallback: If no pipe | is used, just show normal text
+            html += `<div style="color: #9ca3af; padding: 5px;">${line}</div>`;
+          }
+        });
+        html += '</div>';
+        compContainer.innerHTML = html;
+      } else {
+        compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>';
+      }
 
-      // 6. Populate STL Files
+      // 4. STL FILES
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
@@ -296,7 +221,7 @@
         stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>';
       }
 
-      // 7. Populate Makecode --- NEW: GITHUB LINK FIX ADDED ---
+      // 5. MAKECODE
       const mkContainer = document.getElementById('makecode-container');
       if (project.makecodeLinks && project.makecodeLinks.includes("http")) {
         const urlMatch = project.makecodeLinks.match(/https?:\/\/[^\s]+/);
@@ -304,7 +229,6 @@
           if (urlMatch[0].includes("makecode.microbit.org") || urlMatch[0].includes("makecode.com")) {
             mkContainer.innerHTML = `<iframe src="${urlMatch[0]}"></iframe>`;
           } else {
-            // It's a GitHub link, display a button instead of a broken iframe
             mkContainer.innerHTML = `
               <div style="text-align: center; padding: 40px;">
                 <h3 style="margin-bottom: 20px; color: #f3f4f6;">Code Repository</h3>
@@ -318,7 +242,7 @@
         mkContainer.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
       }
 
-      // 8. Populate APP Link (Dynamic visibility)
+      // 6. APP LINK
       if (project.appLink && project.appLink.includes("http")) {
         document.getElementById('tab-btn-app').style.display = 'inline-block';
         document.getElementById('app-link-anchor').href = project.appLink;
