@@ -125,7 +125,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // --- 3D STL PREVIEWER LOGIC ---
+    // --- 3D STL PREVIEWER LOGIC (Powered by GitHub) ---
     window.previewSTL = function(containerId, fileUrl) {
       const container = document.getElementById(containerId);
       
@@ -142,10 +142,10 @@
       container.style.height = '300px';
       container.style.marginTop = '10px';
       container.style.border = '1px solid #333';
-      container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model...</div>";
+      container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model from GitHub...</div>";
       
-// The Ultimate Proxy Attempt (Handles Binary & Redirects)
-      const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(fileUrl);
+      // We load directly from your secure GitHub folder
+      const targetUrl = fileUrl;
       
       setTimeout(() => {
         const width = container.clientWidth;
@@ -169,7 +169,7 @@
         scene.add(light);
         
         const loader = new THREE.STLLoader();
-        loader.load(proxyUrl, function (geometry) {
+        loader.load(targetUrl, function (geometry) {
           const material = new THREE.MeshPhongMaterial({ color: 0x1a8cff, specular: 0x111111, shininess: 100 });
           const mesh = new THREE.Mesh(geometry, material);
           
@@ -197,7 +197,7 @@
           
         }, undefined, function (error) {
           console.error("STL Load Error:", error);
-          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>Security block from Google Drive. Please use the ⬇️ STL button.</div>";
+          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>File not found on GitHub. Make sure you uploaded the STL to the 'models' folder and the names match exactly!</div>";
         });
       }, 350);
     };
@@ -289,18 +289,24 @@
         compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>';
       }
 
-      // 4. STL FILES
+      // 4. STL FILES (Smart GitHub Routing)
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
           const containerId = 'stl-preview-' + index;
+          
+          // We stitch your GitHub URL and the exact file name together for the preview!
+          const githubPreviewUrl = "https://shukri-ahmad.github.io/makerobot/models/" + encodeURIComponent(file.name);
+
           stlList.innerHTML += `
             <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <span style="font-weight: bold;">${file.name}</span>
                 <div style="display: flex; gap: 10px;">
-                  <button onclick="previewSTL('${containerId}', '${file.url}')" class="preview-btn">👁️ PREVIEW</button>
+                  <!-- Preview button uses GitHub -->
+                  <button onclick="previewSTL('${containerId}', '${githubPreviewUrl}')" class="preview-btn">👁️ PREVIEW</button>
+                  <!-- Download button uses Google Drive -->
                   <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️ STL</a>
                 </div>
               </div>
