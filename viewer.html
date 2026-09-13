@@ -73,6 +73,11 @@
       background: #1a8cff; color: white !important; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;
     }
     .buy-btn:hover { background: #0073e6; }
+    
+    .preview-btn {
+      background: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; font-weight: bold;
+    }
+    .preview-btn:hover { background: #444; }
   </style>
 </head>
 <body>
@@ -101,9 +106,7 @@
     </div>
   </div>
 
-  <!-- Note: We removed the <pre> tag here so we can inject nice buttons! -->
   <div id="components" class="tab-content">Loading...</div>
-  
   <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
   <div id="makecode" class="tab-content" style="padding: 0;"><div id="makecode-container" style="height: 100%;">Loading...</div></div>
 
@@ -113,17 +116,107 @@
     <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
   </div>
 
+  <!-- Swiper.js -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  
+  <!-- Three.js (For 3D STL Previews) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
+    // --- 3D STL PREVIEWER LOGIC ---
+    window.previewSTL = function(containerId, fileUrl) {
+      const container = document.getElementById(containerId);
+      
+      // If already open, close it to save memory
+      if (container.style.height === '300px') {
+        container.style.height = '0px';
+        container.style.marginTop = '0px';
+        container.style.border = 'none';
+        setTimeout(() => container.innerHTML = '', 300); 
+        return;
+      }
+      
+      // Open the container
+      container.style.height = '300px';
+      container.style.marginTop = '10px';
+      container.style.border = '1px solid #333';
+      container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model...</div>";
+      
+      // Google Drive blocks direct 3D loading (CORS rule). We route it through a secure proxy.
+      const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(fileUrl);
+      
+      // Wait for the container animation to finish before rendering
+      setTimeout(() => {
+        const width = container.clientWidth;
+        const height = 300;
+        container.innerHTML = ""; // Clear loading text
+        
+        // 1. Setup Scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a); // Dark background
+        
+        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        container.appendChild(renderer.domElement);
+        
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        
+        // 2. Add Lighting
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5));
+        const light = new THREE.DirectionalLight(0xffffff, 0.5);
+        light.position.set(1, 1, 1);
+        scene.add(light);
+        
+        // 3. Load Model
+        const loader = new THREE.STLLoader();
+        loader.load(proxyUrl, function (geometry) {
+          const material = new THREE.MeshPhongMaterial({ color: 0x1a8cff, specular: 0x111111, shininess: 100 });
+          const mesh = new THREE.Mesh(geometry, material);
+          
+          // Center the model dynamically
+          geometry.computeBoundingBox();
+          const box = geometry.boundingBox;
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          mesh.position.sub(center);
+          
+          // Zoom out based on object size
+          const size = box.getSize(new THREE.Vector3()).length();
+          camera.position.z = size * 1.5; 
+          
+          const wrapper = new THREE.Group();
+          wrapper.add(mesh);
+          scene.add(wrapper);
+          
+          // 4. Animate Spin
+          function animate() {
+            if (container.style.height === '0px') return; // Stop memory leak if closed
+            requestAnimationFrame(animate);
+            wrapper.rotation.y += 0.01; // Spin speed
+            controls.update();
+            renderer.render(scene, camera);
+          }
+          animate();
+          
+        }, undefined, function (error) {
+          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>Failed to load preview. Please download directly.</div>";
+        });
+      }, 350);
+    };
+
+    // --- TAB SWITCHING LOGIC ---
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      
       document.getElementById(tabId).classList.add('active');
       btnElement.classList.add('active');
     }
 
+    // --- DATA POPULATION ON LOAD ---
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
@@ -173,30 +266,26 @@
         swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
       }
 
-      // 3. COMPONENTS (New Smart Parser!)
+      // 3. COMPONENTS
       const compContainer = document.getElementById('components');
       if (project.components && project.components.trim() !== "") {
         const lines = project.components.split('\n');
         let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
         
         lines.forEach(line => {
-          if (!line.trim()) return; // skip empty lines
-          
+          if (!line.trim()) return;
           const parts = line.split('|');
-          if (parts.length >= 2) { // If it matches the format Name | Link | Price
+          if (parts.length >= 2) {
             const name = parts[0].trim();
             const link = parts[1].trim();
             const price = parts.length >= 3 ? parts[2].trim() : "";
-            
             html += `
               <div class="list-item">
                 <span style="flex: 1; font-weight: bold; color: #f3f4f6; min-width: 150px;">${name}</span>
                 <span style="color: #00cc44; font-weight: bold; margin-right: 15px;">${price}</span>
                 <a href="${link}" target="_blank" class="buy-btn">BUY NOW ➔</a>
-              </div>
-            `;
+              </div>`;
           } else {
-            // Fallback: If no pipe | is used, just show normal text
             html += `<div style="color: #9ca3af; padding: 5px;">${line}</div>`;
           }
         });
@@ -206,15 +295,22 @@
         compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>';
       }
 
-      // 4. STL FILES
+      // 4. STL FILES (Now with Preview Button!)
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
-        project.stlFiles.forEach(file => {
+        project.stlFiles.forEach((file, index) => {
+          const containerId = 'stl-preview-' + index;
           stlList.innerHTML += `
-            <div class="list-item">
-              <span>${file.name}</span>
-              <a href="${file.url}">Download STL ⬇</a>
+            <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <span style="font-weight: bold;">${file.name}</span>
+                <div style="display: flex; gap: 10px;">
+                  <button onclick="previewSTL('${containerId}', '${file.url}')" class="preview-btn">👁️ PREVIEW</button>
+                  <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️ STL</a>
+                </div>
+              </div>
+              <div id="${containerId}" style="width: 100%; height: 0px; overflow: hidden; transition: height 0.3s; background: #0a0a0a; border-radius: 6px; margin-top: 0px;"></div>
             </div>`;
         });
       } else {
