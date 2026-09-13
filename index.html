@@ -2,368 +2,202 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-  <title>MAKERSPACE@UTHM Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAKERSPACE@UTHM Catalog</title>
   
   <!-- BROWSER TAB LOGO (FAVICON) -->
   <link rel="icon" type="image/png" href="logo.png">
-  
-  <!-- Modern Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
 
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
+    body { 
+      margin: 0; 
+      padding: 0; 
+      background: #0b0f19; 
+      color: white; 
+      font-family: sans-serif; 
       min-height: 100vh;
-      background: #090d16;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.18) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(217, 37, 37, 0.12) 0px, transparent 50%);
-      color: #f3f4f6;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      overflow-x: hidden;
+      display: flex; 
+      flex-direction: column;
     }
 
-    /* GLASS HEADER */
-    header {
-      min-height: 95px;
-      background: rgba(17, 24, 39, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 0.75rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid rgba(217, 37, 37, 0.4);
+    /* HEADER */
+    header { 
+      height: 60px; 
+      background: #111827; 
+      padding: 0 20px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      border-bottom: 2px solid #d92525; 
+      flex-shrink: 0;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     }
+    header h1 { font-size: 1.2rem; margin: 0; color: #f3f4f6; letter-spacing: 1px; }
+    header span { color: #9ca3af; font-size: 0.85rem; font-weight: bold; }
 
-    .brand-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-    }
-
-    /* OFFICIAL LOGO IMAGE */
-    .brand-logo-img {
-      height: 65px;
-      width: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
-      transition: transform 0.3s ease;
-    }
-
-    .brand-logo-img:hover {
-      transform: scale(1.03);
-    }
-
-    .brand-container {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .brand-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff 30%, #60a5fa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.1;
-    }
-
-    .brand-tagline {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #38bdf8;
-      letter-spacing: 0.02em;
-      margin-top: 4px;
-    }
-
-    .status-badge {
-      background: rgba(37, 99, 235, 0.15);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: #60a5fa;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .status-pulse {
-      width: 10px;
-      height: 10px;
-      background: #4ade80;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #4ade80;
-    }
-
-    /* HERO BANNER */
-    .hero {
-      text-align: center;
-      padding: 3rem 1.5rem 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .hero-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #d92525 0%, #991b1b 100%);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 5px 14px;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 14px rgba(217, 37, 37, 0.3);
-    }
-
-    /* MAKEROBOT ECOSYSTEM LOGO - SCALED TO 75%, NO GLOW */
-    .hero-resource-logo {
-      width: 100%;
-      max-width: 285px; /* 75% of previous 380px size */
-      height: auto;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .hero-resource-logo:hover {
-      transform: translateY(-8px) scale(1.02);
-    }
-
-    .hero h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.75rem;
-      font-weight: 800;
-      margin: 0 0 1rem;
-      line-height: 1.2;
-    }
-
-    .hero p {
-      color: #9ca3af;
-      font-size: 1.1rem;
-      margin: 0 auto;
-      max-width: 620px;
-      line-height: 1.6;
-    }
-
-    /* PROJECT GRID */
-    .catalog-container {
+    /* MAIN CONTAINER */
+    main {
+      padding: 2rem;
+      flex: 1;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1rem 1.5rem 4rem;
+      width: 100%;
     }
+    
+    .hero-text {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .hero-text h2 { font-size: 2rem; margin: 0 0 10px 0; color: #fff; }
+    .hero-text p { color: #9ca3af; margin: 0; }
 
-    .grid {
+    /* LOADING SPINNER */
+    #loader {
+      text-align: center;
+      padding: 3rem;
+      color: #60a5fa;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .spinner {
+      display: inline-block;
+      width: 40px; height: 40px;
+      border: 4px solid rgba(96, 165, 250, 0.3);
+      border-radius: 50%;
+      border-top-color: #60a5fa;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* CATALOG GRID */
+    .catalog-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.75rem;
+      gap: 20px;
     }
 
-    .card {
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 16px;
+    /* PROJECT CARDS */
+    .project-card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 10px;
       overflow: hidden;
       text-decoration: none;
-      color: inherit;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: white;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
       display: flex;
       flex-direction: column;
-      position: relative;
     }
-
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: #3b82f6;
-      box-shadow: 0 12px 30px -10px rgba(37, 99, 235, 0.3);
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      border-color: #d92525;
     }
-
-    .card-thumb {
+    .card-image {
       width: 100%;
       height: 180px;
-      background: #1f2937;
       object-fit: cover;
-      border-bottom: 1px solid #1f2937;
+      background: #111827;
+      border-bottom: 1px solid #374151;
     }
-
-    .card-body {
-      padding: 1.25rem;
-      flex: 1;
+    .card-content {
+      padding: 15px;
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
+      align-items: center;
     }
-
-    .card-title {
+    .card-content h3 {
+      margin: 0;
       font-size: 1.1rem;
-      font-weight: 700;
       color: #f9fafb;
-      margin: 0 0 0.75rem;
-      line-height: 1.4;
     }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid #1f2937;
-    }
-
-    .action-link {
-      color: #38bdf8;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: gap 0.2s;
-    }
-
-    .card:hover .action-link {
-      gap: 8px;
-    }
-
-    #loading-state {
-      text-align: center;
-      padding: 4rem 1rem;
-      color: #9ca3af;
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #1f2937;
-      border-top: 4px solid #2563eb;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .card-btn {
+      background: #2563eb;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <!-- OVERARCHING HEADER: MAKERSPACE@UTHM -->
   <header>
-    <div class="brand-wrapper">
-      <img src="logo.png" class="brand-logo-img" alt="MAKERSPACE@UTHM Logo">
-      <div class="brand-container">
-        <span class="brand-title">MAKERSPACE@UTHM</span>
-        <span class="brand-tagline">Learning THROUGH Robotics</span>
-      </div>
-    </div>
-
-    <div class="status-badge">
-      <div class="status-pulse"></div>
-      Open Source Workbench Hub
-    </div>
+    <h1>MAKERSPACE<span style="color:#d92525;">@</span>UTHM</h1>
+    <span>Project Hub</span>
   </header>
 
-  <!-- SPECIFIC RESOURCE HERO: MAKEROBOT ECOSYSTEM -->
-  <section class="hero">
-    <span class="hero-badge">Interactive Learning Hub</span>
-    
-    <!-- MAKEROBOT LOGO -->
-    <img src="makerobot.jpg" alt="MAKEROBOT Ecosystem" class="hero-resource-logo">
-    
-    <h1>Explore MAKEROBOT Projects</h1>
-    <p>Select a project below to launch interactive step-by-step guides, inspect 3D STL parts, view component lists, and preview live MakeCode programs.</p>
-  </section>
-
-  <!-- CATALOG GRID -->
-  <main class="catalog-container">
-    <div id="loading-state">
-      <div class="spinner"></div>
-      <p style="font-weight: 600;">Fetching dynamic projects from Google Drive...</p>
+  <main>
+    <div class="hero-text">
+      <h2>Select Your Project</h2>
+      <p>Choose a robot or module below to open the interactive workbench.</p>
     </div>
-    <div class="grid" id="project-grid"></div>
+
+    <div id="loader">
+      <div class="spinner"></div>
+      <br>Syncing with Google Drive...
+    </div>
+
+    <div class="catalog-grid" id="catalog-grid">
+      <!-- Project cards will be injected here by JavaScript -->
+    </div>
   </main>
 
   <script>
-    // APPS SCRIPT URL:
+    // YOUR APPS SCRIPT WEB APP URL
     const API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
-    function formatDriveImageUrl(url) {
-      if (!url) return '';
-      const match = url.match(/[\w-]{25,}/);
-      if (match && match[0] && !url.includes('thumbnail?id=')) {
-        return `https://drive.google.com/thumbnail?id=${match[0]}&sz=w800`;
-      }
-      return url;
-    }
-
-    async function loadProjects() {
-      const grid = document.getElementById('project-grid');
-      const loading = document.getElementById('loading-state');
+    async function fetchCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      const loader = document.getElementById('loader');
 
       try {
+        // 1. Fetch data from Google Drive via Apps Script
         const response = await fetch(API_URL);
         const projects = await response.json();
 
+        // 2. Save the entire package to the browser's temporary memory
         sessionStorage.setItem('makerspace_projects', JSON.stringify(projects));
 
-        loading.style.display = 'none';
+        // 3. Hide the loading spinner
+        loader.style.display = 'none';
 
+        // 4. Check if folders exist
         if (!projects || projects.length === 0) {
-          grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #9ca3af;">No project folders found in Google Drive.</p>';
+          grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #9ca3af;">No projects found in the Drive folder.</p>';
           return;
         }
 
-        grid.innerHTML = '';
-        projects.forEach((proj, index) => {
-          const rawThumb = proj.thumbnailUrl || proj.coverUrl || (proj.tutorialPages && proj.tutorialPages[0]) || '';
-          const cleanThumb = formatDriveImageUrl(rawThumb) || 'https://via.placeholder.com/300x180/1f2937/9ca3af?text=MAKERSPACE+Module';
-
-          grid.innerHTML += `
-            <a href="viewer.html?id=${index}" class="card">
-              <img src="${cleanThumb}" 
-                   class="card-thumb" 
-                   alt="${proj.title}" 
-                   loading="lazy" 
-                   onerror="this.onerror=null; this.src='https://via.placeholder.com/300x180/1f2937/9ca3af?text=MAKERSPACE+Module';">
-              <div class="card-body">
-                <h3 class="card-title">${proj.title}</h3>
-                <div class="card-footer">
-                  <span style="font-size: 0.78rem; color: #9ca3af; font-weight: 600;">Interactive Guide</span>
-                  <span class="action-link">Open Workbench ➔</span>
-                </div>
-              </div>
-            </a>
+        // 5. Generate the clickable cards
+        projects.forEach((project, index) => {
+          const card = document.createElement('a');
+          card.href = `viewer.html?id=${index}`; // The critical handoff link
+          card.className = 'project-card';
+          
+          card.innerHTML = `
+            <img src="${project.coverUrl}" alt="${project.title}" class="card-image" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+            <div class="card-content">
+              <h3>${project.title}</h3>
+              <span class="card-btn">Build ➔</span>
+            </div>
           `;
+          grid.appendChild(card);
         });
 
-      } catch (err) {
-        console.error("Error loading project catalog:", err);
-        loading.innerHTML = '<p style="color: #f87171; font-weight: bold;">Failed to load catalog from Google Drive. Please refresh.</p>';
+      } catch (error) {
+        console.error("Error fetching catalog:", error);
+        loader.innerHTML = '⚠️ Error loading catalog. Check your Apps Script deployment and permissions.';
+        loader.style.color = '#ef4444';
       }
     }
 
-    loadProjects();
+    // Run the fetch function as soon as the page loads
+    window.onload = fetchCatalog;
   </script>
 </body>
 </html>
