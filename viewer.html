@@ -17,13 +17,15 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background: #0b0f19; color: white; font-family: sans-serif; display: flex; flex-direction: column; }
+    body { margin: 0; padding: 0; width: 100vw; height: 100dvh; overflow: hidden; background: #0b0f19; color: white; font-family: sans-serif; display: flex; flex-direction: column; }
 
     header { height: 60px; background: #111827; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d92525; flex-shrink: 0; }
     header a { color: #fff; text-decoration: none; font-weight: bold; background: #374151; padding: 6px 12px; border-radius: 4px; font-size: 0.85rem; }
     #project-title { font-size: 1rem; font-weight: bold; color: #f3f4f6; }
 
-    .tab-bar { height: 50px; background: #1f2937; display: flex; justify-content: center; gap: 8px; border-bottom: 1px solid #374151; align-items: center; overflow-x: auto; flex-shrink: 0; }
+    /* Updated Tab Bar for Mobile Scrolling */
+    .tab-bar { height: 50px; background: #1f2937; display: flex; justify-content: flex-start; padding: 0 15px; gap: 8px; border-bottom: 1px solid #374151; align-items: center; overflow-x: auto; flex-shrink: 0; -ms-overflow-style: none; scrollbar-width: none; }
+    .tab-bar::-webkit-scrollbar { display: none; }
     .tab-btn { background: #374151; color: #9ca3af; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: all 0.2s; white-space: nowrap; }
     .tab-btn.active { background: #2563eb; color: white; }
 
@@ -60,18 +62,22 @@
       cursor: pointer;
     }
 
-    @media (max-width: 768px) {
-      .mobile-fs-btn { display: block; }
-      .zoom-hint { display: none; } /* Hide hint on mobile to save space */
-    }
-
     /* Fallback CSS for Fullscreen */
     .tutorial-fullscreen {
       position: fixed !important;
       top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw; height: 100vh;
+      width: 100vw; height: 100dvh;
       z-index: 9999;
       background: #000;
+    }
+
+    /* Mobile Overrides */
+    @media (max-width: 1024px) {
+      .mobile-fs-btn { display: block; }
+      .zoom-hint { display: none; }
+      .side-nav-btn { display: none; }
+      .makecode-toolbar span { display: none; }
+      .makecode-toolbar { justify-content: flex-end; }
     }
 
     /* 2. Components List Panel */
@@ -262,6 +268,7 @@
     // --- FULLSCREEN LOGIC FOR ANDROID ---
     function toggleFullscreen() {
       const panel = document.getElementById('panel-tutorial');
+      const btn = document.getElementById('fs-toggle-btn');
       
       if (!document.fullscreenElement) {
         // Trigger Native Fullscreen
@@ -275,6 +282,8 @@
         } else {
           // CSS Fallback if Native fails
           panel.classList.add('tutorial-fullscreen');
+          btn.innerText = "✖ Close";
+          setTimeout(() => { if(swiper) swiper.update(); }, 100);
         }
       } else {
         // Exit Native Fullscreen
@@ -302,7 +311,6 @@
       // Re-calculate Swiper dimensions so zoom & images stay centered
       setTimeout(() => { if(swiper) swiper.update(); }, 100);
     });
-
 
     // 2. Components List Engine
     function initComponentsList() {
