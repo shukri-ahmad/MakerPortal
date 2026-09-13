@@ -296,8 +296,9 @@
         project.stlFiles.forEach((file, index) => {
           const containerId = 'stl-preview-' + index;
           
-          // We stitch your GitHub URL and the exact file name together for the preview!
-          const githubPreviewUrl = "https://shukri-ahmad.github.io/makerobot/models/" + encodeURIComponent(file.name);
+    // Clean double spaces and build clean encoded URL
+    const cleanFileName = file.name.trim();
+    const githubPreviewUrl = `https://shukri-ahmad.github.io/makerobot/models/${encodeURIComponent(cleanFileName).replace(/%20/g, '%20')}`;
 
           stlList.innerHTML += `
             <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
