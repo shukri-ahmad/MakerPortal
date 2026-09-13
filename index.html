@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAKERSPACE@UTHM Catalog</title>
+  <title>MakerPortal | MAKERSPACE@UTHM</title>
   
   <!-- BROWSER TAB LOGO (FAVICON) -->
   <link rel="icon" type="image/png" href="logo.png">
@@ -21,22 +21,56 @@
       flex-direction: column;
     }
 
-    /* HEADER */
+    /* NEW BRANDING HEADER */
     header { 
-      height: 60px; 
+      height: 70px; 
       background: #111827; 
       padding: 0 20px; 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
-      border-bottom: 2px solid #d92525; 
+      border-bottom: 2px solid #2563eb; 
       flex-shrink: 0;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    header h1 { font-size: 1.2rem; margin: 0; color: #f3f4f6; letter-spacing: 1px; }
-    header span { color: #9ca3af; font-size: 0.85rem; font-weight: bold; }
+    
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #f3f4f6;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+
+    .brand-tagline {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      font-style: italic;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-attribution {
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #6b7280;
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 600px) {
+      .brand-title { font-size: 1.2rem; }
+      .brand-tagline { font-size: 0.65rem; }
+      .brand-attribution { display: none; }
+    }
 
     /* MAIN CONTAINER */
     main {
@@ -54,24 +88,89 @@
     .hero-text h2 { font-size: 2rem; margin: 0 0 10px 0; color: #fff; }
     .hero-text p { color: #9ca3af; margin: 0; }
 
-    /* LOADING SPINNER */
+    /* PORTAL LOADING ANIMATION */
     #loader {
       text-align: center;
       padding: 3rem;
-      color: #60a5fa;
-      font-weight: bold;
-      font-size: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-    .spinner {
-      display: inline-block;
-      width: 40px; height: 40px;
-      border: 4px solid rgba(96, 165, 250, 0.3);
+
+    .portal-animation {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .portal-ring-outer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px dashed #2563eb;
       border-radius: 50%;
-      border-top-color: #60a5fa;
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 15px;
+      animation: spinOuter 6s linear infinite, pulseGlow 2s ease-in-out infinite alternate;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .portal-ring-inner {
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      border: 3px solid rgba(217, 37, 37, 0.6);
+      border-top-color: #d92525;
+      border-bottom-color: #d92525;
+      border-radius: 50%;
+      animation: spinInner 2s linear infinite;
+    }
+
+    .portal-core {
+      position: absolute;
+      width: 30%;
+      height: 30%;
+      background: #2563eb;
+      border-radius: 50%;
+      box-shadow: 0 0 20px #2563eb, 0 0 40px #d92525;
+      animation: corePulse 1.5s ease-in-out infinite alternate;
+    }
+
+    .portal-text {
+      color: #60a5fa;
+      font-family: monospace;
+      font-size: 1rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      animation: textBlink 1.5s linear infinite;
+    }
+
+    @keyframes spinOuter {
+      0% { transform: rotate(0deg) scale(0.8); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(0.8); }
+    }
+    
+    @keyframes spinInner {
+      100% { transform: rotate(-360deg); }
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px #2563eb, inset 0 0 10px #2563eb; }
+      100% { box-shadow: 0 0 25px rgba(37, 99, 235, 0.8), inset 0 0 20px rgba(37, 99, 235, 0.8); }
+    }
+
+    @keyframes corePulse {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      100% { transform: scale(1.3); opacity: 1; }
+    }
+
+    @keyframes textBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
 
     /* CATALOG GRID */
     .catalog-grid {
@@ -128,19 +227,26 @@
 <body>
 
   <header>
-    <h1>MAKERSPACE<span style="color:#d92525;">@</span>UTHM</h1>
-    <span>Project Hub</span>
+    <div class="logo-container">
+      <div class="brand-title">Maker<span style="color: #d92525;">Portal</span></div>
+      <div class="brand-tagline">Bridging bytes and build</div>
+    </div>
+    <div class="brand-attribution">by MAKERSPACE@UTHM</div>
   </header>
 
   <main>
     <div class="hero-text">
       <h2>Select Your Project</h2>
-      <p>Choose a robot or module below to open the interactive workbench.</p>
+      <p>Your gateway from digital blueprints to physical builds.</p>
     </div>
 
     <div id="loader">
-      <div class="spinner"></div>
-      <br>Syncing with Google Drive...
+      <div class="portal-animation">
+        <div class="portal-ring-outer"></div>
+        <div class="portal-ring-inner"></div>
+        <div class="portal-core"></div>
+      </div>
+      <div class="portal-text">Establishing Portal Link...</div>
     </div>
 
     <div class="catalog-grid" id="catalog-grid">
@@ -176,7 +282,7 @@
         // 5. Generate the clickable cards
         projects.forEach((project, index) => {
           const card = document.createElement('a');
-          card.href = `viewer.html?id=${index}`; // The critical handoff link
+          card.href = `viewer.html?id=${index}`; 
           card.className = 'project-card';
           
           card.innerHTML = `
@@ -191,12 +297,11 @@
 
       } catch (error) {
         console.error("Error fetching catalog:", error);
-        loader.innerHTML = '⚠️ Error loading catalog. Check your Apps Script deployment and permissions.';
+        loader.innerHTML = '⚠️ Portal link failed. Check your Apps Script deployment and permissions.';
         loader.style.color = '#ef4444';
       }
     }
 
-    // Run the fetch function as soon as the page loads
     window.onload = fetchCatalog;
   </script>
 </body>
