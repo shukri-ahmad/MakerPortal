@@ -214,7 +214,9 @@
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
-      const cachedData = sessionStorage.getItem('makerspace_projects');
+      
+      // CHANGED to localStorage to support opening in new tabs!
+      const cachedData = localStorage.getItem('makerspace_projects');
       
       if (!cachedData || projectId === null) {
         document.getElementById('project-title').innerText = "Error: Project not found.";
