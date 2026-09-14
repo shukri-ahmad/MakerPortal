@@ -41,30 +41,41 @@
     
     .hero-container {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
       width: 100%;
       max-width: 500px; 
     }
     .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
 
-    /* REFRESH BUTTON */
-    .refresh-container { margin-bottom: 2.5rem; text-align: center; }
+    /* FLOATING REFRESH BUTTON */
     .btn-refresh {
-      background: #111111;
-      border: 1px solid #1a8cff;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      background: #1a1a1a;
+      border: 2px solid #1a8cff;
       color: #1a8cff;
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 12px 24px;
+      border-radius: 30px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: bold;
-      transition: all 0.2s;
-      display: inline-flex;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+      transition: all 0.2s ease;
+      display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .btn-refresh:hover { background: #1a8cff; color: #ffffff; }
-    .btn-refresh:disabled { background: #333; color: #777; border-color: #555; cursor: not-allowed; }
+    .btn-refresh:hover { 
+      background: #1a8cff; 
+      color: #ffffff; 
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(26, 140, 255, 0.4);
+    }
+    .btn-refresh:disabled { 
+      background: #333; color: #777; border-color: #555; cursor: not-allowed; transform: none; box-shadow: none;
+    }
 
     /* LOADER ANIMATION */
     #loader { text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -115,6 +126,7 @@
 
     footer {
       background: #050505; border-top: 1px solid #1a1a1a; padding: 1.5rem 1rem; text-align: center; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding-bottom: 80px; /* Extra padding so the floating button doesn't cover text on mobile */
     }
     .footer-text { color: #6b7280; font-size: 0.85rem; letter-spacing: 0.5px; }
     .footer-logo-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -129,13 +141,6 @@
   <main>
     <div class="hero-container">
       <img src="makerportal.jpg" alt="MakerPortal - Bridging bytes and build">
-    </div>
-
-    <!-- NEW REFRESH BUTTON -->
-    <div class="refresh-container">
-      <button id="refreshBtn" class="btn-refresh" onclick="fetchCatalog(true)">
-        <span>🔄</span> Fetch New Modules
-      </button>
     </div>
 
     <div id="loader">
@@ -169,10 +174,14 @@
     </div>
   </footer>
 
+  <!-- FLOATING BUTTON AT THE BOTTOM -->
+  <button id="refreshBtn" class="btn-refresh" onclick="fetchCatalog(true)">
+    <span>🔄</span> Fetch New Modules
+  </button>
+
   <script>
     const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
-    // Now accepts a boolean to determine if we are forcing a refresh
     async function fetchCatalog(forceRefresh = false) {
       const buildGrid = document.getElementById('build-grid');
       const gameGrid = document.getElementById('game-grid');
@@ -180,7 +189,6 @@
       const loaderText = document.getElementById('loader-text');
       const refreshBtn = document.getElementById('refreshBtn');
 
-      // If forcing refresh, reset the UI to loading state
       if (forceRefresh) {
         buildGrid.innerHTML = '';
         gameGrid.innerHTML = '';
@@ -194,7 +202,6 @@
       }
 
       try {
-        // Append ?refresh=true if the user clicked the button
         const fetchUrl = forceRefresh ? `${BASE_API_URL}?refresh=true` : BASE_API_URL;
         
         const response = await fetch(fetchUrl);
@@ -203,7 +210,6 @@
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
         loader.style.display = 'none';
         
-        // Reset refresh button
         refreshBtn.disabled = false;
         refreshBtn.innerHTML = '<span>🔄</span> Fetch New Modules';
 
