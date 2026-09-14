@@ -156,7 +156,8 @@
         const response = await fetch(API_URL);
         const projects = await response.json();
 
-        sessionStorage.setItem('makerspace_projects', JSON.stringify(projects));
+        // CHANGED: Using localStorage so the new tabs can read the memory!
+        localStorage.setItem('makerspace_projects', JSON.stringify(projects));
         loader.style.display = 'none';
 
         if (!projects || projects.length === 0) {
@@ -185,7 +186,7 @@
 
           const card = document.createElement('a');
           card.href = `viewer.html?id=${index}`; 
-          card.target = '_blank'; // <-- THIS OPENS THE MODULE IN A NEW TAB!
+          card.target = '_blank'; // Opens in a new tab!
           card.className = 'project-card';
           
           card.innerHTML = `
