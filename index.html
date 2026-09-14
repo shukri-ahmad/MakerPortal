@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MakerPortal | MAKERSPACE@UTHM</title>
   
-  <link rel="icon" type="image/png" href="logo.png">
+  <!-- FAVICON UPDATED TO MAKERPORTAL.JPG -->
+  <link rel="icon" type="image/jpeg" href="makerportal.jpg">
 
   <style>
     * { box-sizing: border-box; }
@@ -126,7 +127,7 @@
 
     footer {
       background: #050505; border-top: 1px solid #1a1a1a; padding: 1.5rem 1rem; text-align: center; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px;
-      padding-bottom: 80px; /* Extra padding so the floating button doesn't cover text on mobile */
+      padding-bottom: 80px; 
     }
     .footer-text { color: #6b7280; font-size: 0.85rem; letter-spacing: 0.5px; }
     .footer-logo-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -207,7 +208,7 @@
         const response = await fetch(fetchUrl);
         let projects = await response.json();
 
-        // 🌟 Sort the projects based on folder numbers
+        // Sort the projects based on folder numbers
         projects.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
 
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
@@ -234,13 +235,11 @@
           let isGame = false;
           let displayTitle = project.title;
           
-          // Check for Game tag and remove it
           if (displayTitle.toUpperCase().includes('[GAME]')) {
             isGame = true;
             displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
           }
           
-          // Remove leading numbers, dots, and hyphens
           displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
           const card = document.createElement('a');
