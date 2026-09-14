@@ -185,6 +185,7 @@
 
           const card = document.createElement('a');
           card.href = `viewer.html?id=${index}`; 
+          card.target = '_blank'; // <-- THIS OPENS THE MODULE IN A NEW TAB!
           card.className = 'project-card';
           
           card.innerHTML = `
