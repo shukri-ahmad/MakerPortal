@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workbench | MakerPortal</title>
   
-  <link rel="icon" type="image/png" href="logo.png">
+  <!-- FAVICON UPDATED TO MAKERPORTAL.JPG -->
+  <link rel="icon" type="image/jpeg" href="makerportal.jpg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
   <style>
@@ -41,11 +42,10 @@
       position: absolute; top: 15px; right: 15px; z-index: 1000;
       background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid #333;
       padding: 8px 12px; border-radius: 6px; font-size: 1.2rem; cursor: pointer;
-      display: none; /* Hidden by default, shown if swiper is active */
+      display: none; 
     }
     .fs-btn:hover { background: #1a8cff; border-color: #1a8cff; }
 
-    /* Make sure tutorial div handles fullscreen properly */
     #tutorial:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
     #tutorial:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
 
@@ -76,7 +76,6 @@
     <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
     <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
     
-    <!-- Makecode tabs dynamically injected here -->
     <div id="makecode-tabs-wrapper" style="display: contents;"></div>
 
     <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
@@ -95,7 +94,6 @@
   <div id="components" class="tab-content">Loading...</div>
   <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
 
-  <!-- Makecode contents dynamically injected here -->
   <div id="makecode-contents-wrapper" style="display: contents;"></div>
 
   <div id="app" class="tab-content app-panel">
@@ -118,18 +116,18 @@
       if (!document.fullscreenElement) {
         if (tutorialContainer.requestFullscreen) {
           tutorialContainer.requestFullscreen();
-        } else if (tutorialContainer.webkitRequestFullscreen) { /* Safari */
+        } else if (tutorialContainer.webkitRequestFullscreen) {
           tutorialContainer.webkitRequestFullscreen();
-        } else if (tutorialContainer.msRequestFullscreen) { /* IE11 */
+        } else if (tutorialContainer.msRequestFullscreen) {
           tutorialContainer.msRequestFullscreen();
         }
         fsBtn.innerText = "✖";
       } else {
         if (document.exitFullscreen) {
           document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) { /* Safari */
+        } else if (document.webkitExitFullscreen) {
           document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE11 */
+        } else if (document.msExitFullscreen) {
           document.msExitFullscreen();
         }
         fsBtn.innerText = "⛶";
@@ -162,7 +160,6 @@
         
         const controls = new THREE.OrbitControls(camera, renderer.domElement); 
         controls.enableDamping = true;
-        // ENABLE ZOOM AND PAN FOR PC/MOBILE
         controls.enableZoom = true; 
         controls.enablePan = true;  
         
@@ -217,12 +214,26 @@
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
       }
 
-      // 2. TUTORIAL SLIDES
+      // 2. TUTORIAL SLIDES (Now with swiper-zoom-container!)
       const swiperWrapper = document.getElementById('swiper-wrapper');
       if (project.tutorialImages && project.tutorialImages.length > 0) {
-        fsBtn.style.display = 'block'; // Show fullscreen button since there are images
-        project.tutorialImages.forEach(img => { swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${img.url}" alt="${img.name}"></div>`; });
-        new Swiper(".mySwiper", { navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, pagination: { el: ".swiper-pagination", clickable: true }, keyboard: { enabled: true } });
+        fsBtn.style.display = 'block'; 
+        project.tutorialImages.forEach(img => { 
+          swiperWrapper.innerHTML += `
+            <div class="swiper-slide">
+              <div class="swiper-zoom-container">
+                <img src="${img.url}" alt="${img.name}">
+              </div>
+            </div>`; 
+        });
+        
+        // ZOOM ENABLED HERE
+        new Swiper(".mySwiper", { 
+          zoom: true, 
+          navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, 
+          pagination: { el: ".swiper-pagination", clickable: true }, 
+          keyboard: { enabled: true } 
+        });
       } else {
         swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
       }
@@ -249,7 +260,6 @@
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
           const containerId = 'stl-preview-' + index;
-          // REPO NAME UPDATED HERE:
           const githubPreviewUrl = "https://shukri-ahmad.github.io/MakerPortal/models/" + encodeURIComponent(file.name);
           stlList.innerHTML += `
             <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
