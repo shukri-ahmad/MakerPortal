@@ -5,80 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workbench | MakerPortal</title>
   
-  <link rel="icon" type="image/png" href="makerportal.png">
-  
+  <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      background: #000000;
-      color: #ffffff;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
+      background: #000000; color: #ffffff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
     }
-
-    .top-accent {
-      height: 4px; width: 100%;
-      background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000);
-      flex-shrink: 0;
-    }
-    
-    header {
-      background: #050505;
-      border-bottom: 1px solid #1a1a1a;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-shrink: 0;
-    }
-    
+    .top-accent { height: 4px; width: 100%; background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000); flex-shrink: 0; }
+    header { background: #050505; border-bottom: 1px solid #1a1a1a; padding: 10px 20px; display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
     .back-btn { color: #1a8cff; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
     .project-title { font-size: 1.2rem; font-weight: bold; color: #f3f4f6; }
 
-    .tabs-nav {
-      display: flex; background: #111111; border-bottom: 2px solid #333333; flex-shrink: 0; overflow-x: auto;
-    }
-    
-    .tab-btn {
-      flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px;
-    }
+    .tabs-nav { display: flex; background: #111111; border-bottom: 2px solid #333333; flex-shrink: 0; overflow-x: auto; }
+    .tab-btn { flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px; }
     .tab-btn:hover { color: #ffffff; background: #1a1a1a; }
     .tab-btn.active { color: #1a8cff; border-bottom-color: #1a8cff; background: #0a0a0a; }
 
     .tab-content { display: none; flex: 1; overflow-y: auto; padding: 20px; background: #000000; }
     .tab-content.active { display: block; }
-
     .swiper { width: 100%; height: 100%; background: #0a0a0a; border-radius: 8px; }
     .swiper-slide { display: flex; justify-content: center; align-items: center; }
     .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    .list-item {
-      background: #111111; border: 1px solid #333333; padding: 15px; margin-bottom: 10px; border-radius: 6px; 
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-    }
+    .list-item { background: #111111; border: 1px solid #333333; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .list-item a { color: #1a8cff; text-decoration: none; font-weight: bold; }
     iframe { width: 100%; height: 100%; border: none; border-radius: 8px; background: white; }
 
-    .app-launch-btn {
-      display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); margin-top: 20px; transition: transform 0.2s;
-    }
+    .app-launch-btn { display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); margin-top: 20px; transition: transform 0.2s; }
     .app-launch-btn:hover { transform: scale(1.05); }
     .app-panel { text-align: center; padding: 40px 20px; }
-    
-    .buy-btn {
-      background: #1a8cff; color: white !important; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s;
-    }
+    .buy-btn { background: #1a8cff; color: white !important; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; }
     .buy-btn:hover { background: #0073e6; }
-    
-    .preview-btn {
-      background: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; font-weight: bold;
-    }
+    .preview-btn { background: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; font-weight: bold; }
     .preview-btn:hover { background: #444; }
   </style>
 </head>
@@ -95,7 +56,10 @@
     <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
     <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
     <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
-    <button class="tab-btn" id="tab-btn-makecode" onclick="switchTab('makecode', this)">MakeCode</button>
+    
+    <!-- Makecode tabs will be dynamically injected here -->
+    <div id="makecode-tabs-wrapper" style="display: contents;"></div>
+
     <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
   </div>
 
@@ -110,7 +74,9 @@
 
   <div id="components" class="tab-content">Loading...</div>
   <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
-  <div id="makecode" class="tab-content" style="padding: 0;"><div id="makecode-container" style="height: 100%;">Loading...</div></div>
+
+  <!-- Makecode contents will be dynamically injected here -->
+  <div id="makecode-contents-wrapper" style="display: contents;"></div>
 
   <div id="app" class="tab-content app-panel">
     <h2 id="app-heading" style="color: #f3f4f6; margin-bottom: 10px;">Ready to Drive?</h2>
@@ -118,93 +84,41 @@
     <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
   </div>
 
-  <!-- Swiper.js -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  
-  <!-- Three.js (For 3D STL Previews) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // --- 3D STL PREVIEWER LOGIC (Powered by GitHub) ---
     window.previewSTL = function(containerId, fileUrl) {
       const container = document.getElementById(containerId);
-      
-      // If already open, close it to save memory
       if (container.style.height === '300px') {
-        container.style.height = '0px';
-        container.style.marginTop = '0px';
-        container.style.border = 'none';
-        setTimeout(() => container.innerHTML = '', 300); 
-        return;
+        container.style.height = '0px'; container.style.marginTop = '0px'; container.style.border = 'none';
+        setTimeout(() => container.innerHTML = '', 300); return;
       }
-      
-      // Open the container
-      container.style.height = '300px';
-      container.style.marginTop = '10px';
-      container.style.border = '1px solid #333';
+      container.style.height = '300px'; container.style.marginTop = '10px'; container.style.border = '1px solid #333';
       container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model from GitHub...</div>";
-      
-      // We load directly from your secure GitHub folder
-      const targetUrl = fileUrl;
-      
       setTimeout(() => {
         const width = container.clientWidth;
         const height = 300;
         container.innerHTML = ""; 
-        
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0a0a0a); 
-        
+        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0a0a0a); 
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(width, height);
-        container.appendChild(renderer.domElement);
-        
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5));
-        const light = new THREE.DirectionalLight(0xffffff, 0.5);
-        light.position.set(1, 1, 1);
-        scene.add(light);
-        
+        const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(width, height); container.appendChild(renderer.domElement);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5)); const light = new THREE.DirectionalLight(0xffffff, 0.5); light.position.set(1, 1, 1); scene.add(light);
         const loader = new THREE.STLLoader();
-        loader.load(targetUrl, function (geometry) {
+        loader.load(fileUrl, function (geometry) {
           const material = new THREE.MeshPhongMaterial({ color: 0x1a8cff, specular: 0x111111, shininess: 100 });
           const mesh = new THREE.Mesh(geometry, material);
-          
-          geometry.computeBoundingBox();
-          const box = geometry.boundingBox;
-          const center = new THREE.Vector3();
-          box.getCenter(center);
-          mesh.position.sub(center);
-          
-          const size = box.getSize(new THREE.Vector3()).length();
-          camera.position.z = size * 1.5; 
-          
-          const wrapper = new THREE.Group();
-          wrapper.add(mesh);
-          scene.add(wrapper);
-          
-          function animate() {
-            if (container.style.height === '0px') return; 
-            requestAnimationFrame(animate);
-            wrapper.rotation.y += 0.01; 
-            controls.update();
-            renderer.render(scene, camera);
-          }
-          animate();
-          
-        }, undefined, function (error) {
-          console.error("STL Load Error:", error);
-          container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>File not found on GitHub. Make sure you uploaded the STL to the 'models' folder and the names match exactly!</div>";
-        });
+          geometry.computeBoundingBox(); const box = geometry.boundingBox; const center = new THREE.Vector3(); box.getCenter(center); mesh.position.sub(center);
+          const size = box.getSize(new THREE.Vector3()).length(); camera.position.z = size * 1.5; 
+          const wrapper = new THREE.Group(); wrapper.add(mesh); scene.add(wrapper);
+          function animate() { if (container.style.height === '0px') return; requestAnimationFrame(animate); wrapper.rotation.y += 0.01; controls.update(); renderer.render(scene, camera); } animate();
+        }, undefined, function (error) { container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>File not found on GitHub.</div>"; });
       }, 350);
     };
 
-    // --- TAB SWITCHING LOGIC ---
     function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -212,18 +126,11 @@
       btnElement.classList.add('active');
     }
 
-    // --- DATA POPULATION ON LOAD ---
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
-      
-      // CHANGED to localStorage to support opening in new tabs!
       const cachedData = localStorage.getItem('makerspace_projects');
-      
-      if (!cachedData || projectId === null) {
-        document.getElementById('project-title').innerText = "Error: Project not found.";
-        return;
-      }
+      if (!cachedData || projectId === null) { document.getElementById('project-title').innerText = "Error: Project not found."; return; }
 
       const projects = JSON.parse(cachedData);
       const project = projects[projectId];
@@ -232,8 +139,7 @@
       let isGame = false;
       let displayTitle = project.title;
       if (displayTitle.toUpperCase().startsWith('[GAME]')) {
-        isGame = true;
-        displayTitle = displayTitle.substring(6).trim(); 
+        isGame = true; displayTitle = displayTitle.substring(6).trim(); 
       }
       document.getElementById('project-title').innerText = displayTitle;
 
@@ -241,8 +147,7 @@
         document.getElementById('tab-btn-tutorial').innerText = 'Manual';
         document.getElementById('tab-btn-components').style.display = 'none';
         document.getElementById('tab-btn-stl').style.display = 'none';
-        document.getElementById('tab-btn-makecode').style.display = 'none';
-
+        document.getElementById('makecode-tabs-wrapper').style.display = 'none'; // Hides dynamic makecode tabs
         document.getElementById('tab-btn-app').innerText = 'Game Management';
         document.getElementById('app-heading').innerText = 'Game Management System';
         document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
@@ -252,14 +157,8 @@
       // 2. TUTORIAL SLIDES
       const swiperWrapper = document.getElementById('swiper-wrapper');
       if (project.tutorialImages && project.tutorialImages.length > 0) {
-        project.tutorialImages.forEach(img => {
-          swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${img.url}" alt="${img.name}"></div>`;
-        });
-        new Swiper(".mySwiper", {
-          navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-          pagination: { el: ".swiper-pagination", clickable: true },
-          keyboard: { enabled: true }
-        });
+        project.tutorialImages.forEach(img => { swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${img.url}" alt="${img.name}"></div>`; });
+        new Swiper(".mySwiper", { navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, pagination: { el: ".swiper-pagination", clickable: true }, keyboard: { enabled: true } });
       } else {
         swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
       }
@@ -269,77 +168,105 @@
       if (project.components && project.components.trim() !== "") {
         const lines = project.components.split('\n');
         let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
-        
         lines.forEach(line => {
           if (!line.trim()) return;
           const parts = line.split('|');
           if (parts.length >= 2) {
-            const name = parts[0].trim();
-            const link = parts[1].trim();
-            const price = parts.length >= 3 ? parts[2].trim() : "";
-            html += `
-              <div class="list-item">
-                <span style="flex: 1; font-weight: bold; color: #f3f4f6; min-width: 150px;">${name}</span>
-                <span style="color: #00cc44; font-weight: bold; margin-right: 15px;">${price}</span>
-                <a href="${link}" target="_blank" class="buy-btn">BUY NOW ➔</a>
-              </div>`;
-          } else {
-            html += `<div style="color: #9ca3af; padding: 5px;">${line}</div>`;
-          }
+            const name = parts[0].trim(), link = parts[1].trim(), price = parts.length >= 3 ? parts[2].trim() : "";
+            html += `<div class="list-item"><span style="flex: 1; font-weight: bold; color: #f3f4f6; min-width: 150px;">${name}</span><span style="color: #00cc44; font-weight: bold; margin-right: 15px;">${price}</span><a href="${link}" target="_blank" class="buy-btn">BUY NOW ➔</a></div>`;
+          } else { html += `<div style="color: #9ca3af; padding: 5px;">${line}</div>`; }
         });
-        html += '</div>';
-        compContainer.innerHTML = html;
-      } else {
-        compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>';
-      }
+        compContainer.innerHTML = html + '</div>';
+      } else { compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>'; }
 
-      // 4. STL FILES (Smart GitHub Routing)
+      // 4. STL FILES
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
           const containerId = 'stl-preview-' + index;
-          
-          // We stitch your GitHub URL and the exact file name together for the preview!
           const githubPreviewUrl = "https://shukri-ahmad.github.io/makerspace_resource/models/" + encodeURIComponent(file.name);
-
           stlList.innerHTML += `
             <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <span style="font-weight: bold;">${file.name}</span>
                 <div style="display: flex; gap: 10px;">
-                  <!-- Preview button uses GitHub -->
                   <button onclick="previewSTL('${containerId}', '${githubPreviewUrl}')" class="preview-btn">👁️ PREVIEW</button>
-                  <!-- Download button uses Google Drive -->
                   <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️ STL</a>
                 </div>
               </div>
               <div id="${containerId}" style="width: 100%; height: 0px; overflow: hidden; transition: height 0.3s; background: #0a0a0a; border-radius: 6px; margin-top: 0px;"></div>
             </div>`;
         });
-      } else {
-        stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>';
+      } else { stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>'; }
+
+      // 5. DYNAMIC MAKECODE TABS
+      const mkTabsWrapper = document.getElementById('makecode-tabs-wrapper');
+      const mkContentsWrapper = document.getElementById('makecode-contents-wrapper');
+      
+      let makecodeData = project.makecodeLinks;
+
+      // Fallback: If cache still holds the old string version, convert it gracefully to the new array structure
+      if (typeof makecodeData === 'string') {
+        makecodeData = makecodeData.trim() !== '' ? [{ name: 'MakeCode', url: makecodeData }] : [];
       }
 
-      // 5. MAKECODE
-      const mkContainer = document.getElementById('makecode-container');
-      if (project.makecodeLinks && project.makecodeLinks.includes("http")) {
-        const urlMatch = project.makecodeLinks.match(/https?:\/\/[^\s]+/);
-        if (urlMatch) {
-          if (urlMatch[0].includes("makecode.microbit.org") || urlMatch[0].includes("makecode.com")) {
-            mkContainer.innerHTML = `<iframe src="${urlMatch[0]}"></iframe>`;
+      if (makecodeData && makecodeData.length > 0) {
+        makecodeData.forEach((mk, index) => {
+          const lowerName = mk.name.toLowerCase();
+          
+          // Determine tab name based on Drive file name
+          let tabTitle = 'MakeCode';
+          if (lowerName.includes('robot')) tabTitle = 'MakeCode Robot';
+          else if (lowerName.includes('remote')) tabTitle = 'MakeCode Remote';
+          else if (makecodeData.length > 1) tabTitle = `MakeCode ${index + 1}`; // e.g., MakeCode 1, MakeCode 2
+
+          const tabId = `makecode-dynamic-${index}`;
+
+          // Create the Button
+          const btn = document.createElement('button');
+          btn.className = 'tab-btn';
+          btn.id = `tab-btn-${tabId}`;
+          btn.innerText = tabTitle;
+          btn.onclick = function() { switchTab(tabId, this); };
+          mkTabsWrapper.appendChild(btn);
+
+          // Create the Content
+          const content = document.createElement('div');
+          content.id = tabId;
+          content.className = 'tab-content';
+          content.style.padding = '0';
+          
+          const urlMatch = mk.url.match(/https?:\/\/[^\s]+/);
+          if (urlMatch) {
+            if (urlMatch[0].includes("makecode.microbit.org") || urlMatch[0].includes("makecode.com")) {
+              content.innerHTML = `<iframe src="${urlMatch[0]}" style="width:100%; height:100%; border:none;"></iframe>`;
+            } else {
+              content.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                  <h3 style="margin-bottom: 20px; color: #f3f4f6;">Code Repository</h3>
+                  <a href="${urlMatch[0]}" target="_blank" class="app-launch-btn" style="background: #1a8cff;">OPEN REPOSITORY ➔</a>
+                </div>`;
+            }
           } else {
-            mkContainer.innerHTML = `
-              <div style="text-align: center; padding: 40px;">
-                <h3 style="margin-bottom: 20px; color: #f3f4f6;">Code Repository</h3>
-                <a href="${urlMatch[0]}" target="_blank" class="app-launch-btn" style="background: #1a8cff;">OPEN REPOSITORY ➔</a>
-              </div>`;
+            content.innerHTML = `<div style="padding: 20px;">${mk.url}</div>`;
           }
-        } else {
-          mkContainer.innerText = project.makecodeLinks;
-        }
+          mkContentsWrapper.appendChild(content);
+        });
       } else {
-        mkContainer.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
+        // Fallback for no makecode files
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.id = 'tab-btn-makecode-empty';
+        btn.innerText = 'MakeCode';
+        btn.onclick = function() { switchTab('makecode-empty', this); };
+        mkTabsWrapper.appendChild(btn);
+
+        const content = document.createElement('div');
+        content.id = 'makecode-empty';
+        content.className = 'tab-content';
+        content.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
+        mkContentsWrapper.appendChild(content);
       }
 
       // 6. APP LINK
