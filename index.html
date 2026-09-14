@@ -122,7 +122,7 @@
     .card-content h3 { margin: 0; font-size: 1.1rem; color: #f9fafb; }
     
     .card-btn { background: #1a8cff; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
-    .btn-play { background: #e60000; } /* Special color for Game cards */
+    .btn-play { background: #e60000; }
 
     footer {
       background: #050505; border-top: 1px solid #1a1a1a; padding: 1.5rem 1rem; text-align: center; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -205,7 +205,10 @@
         const fetchUrl = forceRefresh ? `${BASE_API_URL}?refresh=true` : BASE_API_URL;
         
         const response = await fetch(fetchUrl);
-        const projects = await response.json();
+        let projects = await response.json();
+
+        // 🌟 Sort the projects based on folder numbers
+        projects.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
 
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
         loader.style.display = 'none';
@@ -231,10 +234,14 @@
           let isGame = false;
           let displayTitle = project.title;
           
-          if (displayTitle.toUpperCase().startsWith('[GAME]')) {
+          // Check for Game tag and remove it
+          if (displayTitle.toUpperCase().includes('[GAME]')) {
             isGame = true;
-            displayTitle = displayTitle.substring(6).trim(); 
+            displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
           }
+          
+          // Remove leading numbers, dots, and hyphens
+          displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
           const card = document.createElement('a');
           card.href = `viewer.html?id=${index}`; 
