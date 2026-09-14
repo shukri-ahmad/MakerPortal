@@ -3,278 +3,279 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workbench | MakerPortal</title>
+  <title>MakerPortal | MAKERSPACE@UTHM</title>
   
   <link rel="icon" type="image/png" href="logo.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
     
-    body {
-      background: #000000; color: #ffffff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+    body { 
+      margin: 0; 
+      padding: 0; 
+      background: #000000; 
+      color: #ffffff; 
+      font-family: sans-serif; 
+      min-height: 100vh;
+      display: flex; 
+      flex-direction: column;
     }
-    .top-accent { height: 4px; width: 100%; background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000); flex-shrink: 0; }
-    header { background: #050505; border-bottom: 1px solid #1a1a1a; padding: 10px 20px; display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
-    .back-btn { color: #1a8cff; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-    .project-title { font-size: 1.2rem; font-weight: bold; color: #f3f4f6; }
 
-    .tabs-nav { display: flex; background: #111111; border-bottom: 2px solid #333333; flex-shrink: 0; overflow-x: auto; }
-    .tab-btn { flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px; }
-    .tab-btn:hover { color: #ffffff; background: #1a1a1a; }
-    .tab-btn.active { color: #1a8cff; border-bottom-color: #1a8cff; background: #0a0a0a; }
+    .top-accent {
+      height: 4px;
+      width: 100%;
+      background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000);
+      flex-shrink: 0;
+    }
 
-    .tab-content { display: none; flex: 1; overflow-y: auto; padding: 20px; background: #000000; }
-    .tab-content.active { display: block; }
-    .swiper { width: 100%; height: 100%; background: #0a0a0a; border-radius: 8px; }
-    .swiper-slide { display: flex; justify-content: center; align-items: center; }
-    .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    main {
+      padding: 2rem 1.5rem;
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .hero-container {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      width: 100%;
+      max-width: 500px; 
+    }
+    .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
 
-    .list-item { background: #111111; border: 1px solid #333333; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-    .list-item a { color: #1a8cff; text-decoration: none; font-weight: bold; }
-    iframe { width: 100%; height: 100%; border: none; border-radius: 8px; background: white; }
+    /* FLOATING REFRESH BUTTON */
+    .btn-refresh {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      background: #1a1a1a;
+      border: 2px solid #1a8cff;
+      color: #1a8cff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: bold;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-refresh:hover { 
+      background: #1a8cff; 
+      color: #ffffff; 
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(26, 140, 255, 0.4);
+    }
+    .btn-refresh:disabled { 
+      background: #333; color: #777; border-color: #555; cursor: not-allowed; transform: none; box-shadow: none;
+    }
 
-    .app-launch-btn { display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); margin-top: 20px; transition: transform 0.2s; }
-    .app-launch-btn:hover { transform: scale(1.05); }
-    .app-panel { text-align: center; padding: 40px 20px; }
-    .buy-btn { background: #1a8cff; color: white !important; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; }
-    .buy-btn:hover { background: #0073e6; }
-    .preview-btn { background: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; font-weight: bold; }
-    .preview-btn:hover { background: #444; }
+    /* LOADER ANIMATION */
+    #loader { text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .portal-animation { position: relative; width: 80px; height: 80px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
+    .portal-ring-outer { position: absolute; width: 100%; height: 100%; border: 3px dashed #1a8cff; border-radius: 50%; animation: spinOuter 6s linear infinite, pulseGlow 2s ease-in-out infinite alternate; }
+    .portal-ring-inner { position: absolute; width: 70%; height: 70%; border: 3px solid rgba(230, 0, 0, 0.6); border-top-color: #e60000; border-bottom-color: #e60000; border-radius: 50%; animation: spinInner 2s linear infinite; }
+    .portal-core { position: absolute; width: 30%; height: 30%; background: #1a8cff; border-radius: 50%; box-shadow: 0 0 20px #1a8cff, 0 0 40px #e60000; animation: corePulse 1.5s ease-in-out infinite alternate; }
+    .portal-text { color: #1a8cff; font-family: monospace; font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; animation: textBlink 1.5s linear infinite; }
+
+    @keyframes spinOuter { 0% { transform: rotate(0deg) scale(0.8); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(0.8); } }
+    @keyframes spinInner { 100% { transform: rotate(-360deg); } }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 10px #1a8cff, inset 0 0 10px #1a8cff; } 100% { box-shadow: 0 0 25px rgba(26, 140, 255, 0.8), inset 0 0 20px rgba(26, 140, 255, 0.8); } }
+    @keyframes corePulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.3); opacity: 1; } }
+    @keyframes textBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* SECTION STYLES */
+    .section-container { width: 100%; margin-bottom: 3rem; }
+    .section-title {
+      color: #f3f4f6;
+      border-bottom: 2px solid #333333;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; width: 100%; }
+
+    .project-card {
+      background: #111111;
+      border: 1px solid #333333;
+      border-radius: 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: white;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
+    .card-image { width: 100%; height: 180px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
+    .card-content { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .card-content h3 { margin: 0; font-size: 1.1rem; color: #f9fafb; }
+    
+    .card-btn { background: #1a8cff; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
+    .btn-play { background: #e60000; }
+
+    footer {
+      background: #050505; border-top: 1px solid #1a1a1a; padding: 1.5rem 1rem; text-align: center; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding-bottom: 80px; /* Extra padding so the floating button doesn't cover text on mobile */
+    }
+    .footer-text { color: #6b7280; font-size: 0.85rem; letter-spacing: 0.5px; }
+    .footer-logo-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .footer-makerspace-logo { height: 30px; width: auto; border-radius: 4px; }
+    .footer-brand { color: #f3f4f6; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
   </style>
 </head>
 <body>
 
   <div class="top-accent"></div>
 
-  <header>
-    <a href="index.html" class="back-btn">⬅</a>
-    <div class="project-title" id="project-title">Loading...</div>
-  </header>
-
-  <div class="tabs-nav">
-    <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
-    <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
-    <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
-    
-    <!-- Makecode tabs will be dynamically injected here -->
-    <div id="makecode-tabs-wrapper" style="display: contents;"></div>
-
-    <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
-  </div>
-
-  <div id="tutorial" class="tab-content active" style="padding: 0;">
-    <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="swiper-wrapper"></div>
-      <div class="swiper-button-next" style="color: #1a8cff;"></div>
-      <div class="swiper-button-prev" style="color: #1a8cff;"></div>
-      <div class="swiper-pagination"></div>
+  <main>
+    <div class="hero-container">
+      <img src="makerportal.jpg" alt="MakerPortal - Bridging bytes and build">
     </div>
-  </div>
 
-  <div id="components" class="tab-content">Loading...</div>
-  <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
+    <div id="loader">
+      <div class="portal-animation">
+        <div class="portal-ring-outer"></div>
+        <div class="portal-ring-inner"></div>
+        <div class="portal-core"></div>
+      </div>
+      <div class="portal-text" id="loader-text">Establishing Portal Link...</div>
+    </div>
 
-  <!-- Makecode contents will be dynamically injected here -->
-  <div id="makecode-contents-wrapper" style="display: contents;"></div>
+    <!-- BUILD HUB SECTION -->
+    <div class="section-container" id="build-section" style="display: none;">
+      <h2 class="section-title">⚙️ BUILD HUB</h2>
+      <div class="catalog-grid" id="build-grid"></div>
+    </div>
 
-  <div id="app" class="tab-content app-panel">
-    <h2 id="app-heading" style="color: #f3f4f6; margin-bottom: 10px;">Ready to Drive?</h2>
-    <p id="app-desc" style="color: #9ca3af; margin-bottom: 20px;">Launch the Web Bluetooth controller to take command of your robot.</p>
-    <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
-  </div>
+    <!-- GAME ARENA SECTION -->
+    <div class="section-container" id="game-section" style="display: none;">
+      <h2 class="section-title">🎮 GAME ARENA</h2>
+      <div class="catalog-grid" id="game-grid"></div>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  </main>
+
+  <footer>
+    <div class="footer-text">Powered by</div>
+    <div class="footer-logo-container">
+      <img src="logo.png" alt="MAKERSPACE Logo" class="footer-makerspace-logo" onerror="this.style.display='none'">
+      <span class="footer-brand">MAKERSPACE@UTHM</span>
+    </div>
+  </footer>
+
+  <!-- FLOATING BUTTON AT THE BOTTOM -->
+  <button id="refreshBtn" class="btn-refresh" onclick="fetchCatalog(true)">
+    <span>🔄</span> Fetch New Modules
+  </button>
 
   <script>
-    window.previewSTL = function(containerId, fileUrl) {
-      const container = document.getElementById(containerId);
-      if (container.style.height === '300px') {
-        container.style.height = '0px'; container.style.marginTop = '0px'; container.style.border = 'none';
-        setTimeout(() => container.innerHTML = '', 300); return;
-      }
-      container.style.height = '300px'; container.style.marginTop = '10px'; container.style.border = '1px solid #333';
-      container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model from GitHub...</div>";
-      setTimeout(() => {
-        const width = container.clientWidth;
-        const height = 300;
-        container.innerHTML = ""; 
-        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0a0a0a); 
-        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(width, height); container.appendChild(renderer.domElement);
-        const controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
-        scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5)); const light = new THREE.DirectionalLight(0xffffff, 0.5); light.position.set(1, 1, 1); scene.add(light);
-        const loader = new THREE.STLLoader();
-        loader.load(fileUrl, function (geometry) {
-          const material = new THREE.MeshPhongMaterial({ color: 0x1a8cff, specular: 0x111111, shininess: 100 });
-          const mesh = new THREE.Mesh(geometry, material);
-          geometry.computeBoundingBox(); const box = geometry.boundingBox; const center = new THREE.Vector3(); box.getCenter(center); mesh.position.sub(center);
-          const size = box.getSize(new THREE.Vector3()).length(); camera.position.z = size * 1.5; 
-          const wrapper = new THREE.Group(); wrapper.add(mesh); scene.add(wrapper);
-          function animate() { if (container.style.height === '0px') return; requestAnimationFrame(animate); wrapper.rotation.y += 0.01; controls.update(); renderer.render(scene, camera); } animate();
-        }, undefined, function (error) { container.innerHTML = "<div style='color: #e60000; margin-top: 130px; text-align: center;'>File not found on GitHub.</div>"; });
-      }, 350);
-    };
+    const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
-    function switchTab(tabId, btnElement) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btnElement.classList.add('active');
+    async function fetchCatalog(forceRefresh = false) {
+      const buildGrid = document.getElementById('build-grid');
+      const gameGrid = document.getElementById('game-grid');
+      const loader = document.getElementById('loader');
+      const loaderText = document.getElementById('loader-text');
+      const refreshBtn = document.getElementById('refreshBtn');
+
+      if (forceRefresh) {
+        buildGrid.innerHTML = '';
+        gameGrid.innerHTML = '';
+        document.getElementById('build-section').style.display = 'none';
+        document.getElementById('game-section').style.display = 'none';
+        loader.style.display = 'flex';
+        loaderText.innerText = 'Scanning Drive for new modules...';
+        
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<span>⏳</span> Scanning...';
+      }
+
+      try {
+        const fetchUrl = forceRefresh ? `${BASE_API_URL}?refresh=true` : BASE_API_URL;
+        
+        const response = await fetch(fetchUrl);
+        let projects = await response.json();
+
+        // 🌟 Sort the projects based on folder numbers
+        projects.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
+
+        localStorage.setItem('makerspace_projects', JSON.stringify(projects));
+        loader.style.display = 'none';
+        
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<span>🔄</span> Fetch New Modules';
+
+        if (!projects || projects.length === 0) {
+          buildGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #9ca3af;">No projects found in the Drive folder.</p>';
+          document.getElementById('build-section').style.display = 'block';
+          return;
+        }
+
+        projects.forEach((project, index) => {
+          let displayCover = project.coverUrl;
+          if (!displayCover && project.tutorialImages && project.tutorialImages.length > 0) {
+            displayCover = project.tutorialImages[0].url;
+          }
+          if (!displayCover) {
+            displayCover = 'https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';
+          }
+
+          let isGame = false;
+          let displayTitle = project.title;
+          
+          // Check for Game tag and remove it
+          if (displayTitle.toUpperCase().includes('[GAME]')) {
+            isGame = true;
+            displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
+          }
+          
+          // Remove leading numbers, dots, and hyphens
+          displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
+
+          const card = document.createElement('a');
+          card.href = `viewer.html?id=${index}`; 
+          card.target = '_blank';
+          card.className = 'project-card';
+          
+          card.innerHTML = `
+            <img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy" 
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
+            <div class="card-content">
+              <h3>${displayTitle}</h3>
+              <span class="card-btn ${isGame ? 'btn-play' : ''}">${isGame ? 'Play ➔' : 'Build ➔'}</span>
+            </div>
+          `;
+          
+          if (isGame) {
+            gameGrid.appendChild(card);
+            document.getElementById('game-section').style.display = 'block';
+          } else {
+            buildGrid.appendChild(card);
+            document.getElementById('build-section').style.display = 'block';
+          }
+        });
+
+      } catch (error) {
+        console.error("Error fetching catalog:", error);
+        loader.innerHTML = '⚠️ Portal link failed. Check your Apps Script deployment and permissions.';
+        loader.style.color = '#e60000';
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<span>🔄</span> Retry Fetch';
+      }
     }
 
-    window.onload = function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const projectId = urlParams.get('id');
-      const cachedData = localStorage.getItem('makerspace_projects');
-      if (!cachedData || projectId === null) { document.getElementById('project-title').innerText = "Error: Project not found."; return; }
-
-      const projects = JSON.parse(cachedData);
-      const project = projects[projectId];
-
-      // 1. GAME MODE DETECTION
-      let isGame = false;
-      let displayTitle = project.title;
-      if (displayTitle.toUpperCase().startsWith('[GAME]')) {
-        isGame = true; displayTitle = displayTitle.substring(6).trim(); 
-      }
-      document.getElementById('project-title').innerText = displayTitle;
-
-      if (isGame) {
-        document.getElementById('tab-btn-tutorial').innerText = 'Manual';
-        document.getElementById('tab-btn-components').style.display = 'none';
-        document.getElementById('tab-btn-stl').style.display = 'none';
-        document.getElementById('makecode-tabs-wrapper').style.display = 'none'; // Hides dynamic makecode tabs
-        document.getElementById('tab-btn-app').innerText = 'Game Management';
-        document.getElementById('app-heading').innerText = 'Game Management System';
-        document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
-        document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
-      }
-
-      // 2. TUTORIAL SLIDES
-      const swiperWrapper = document.getElementById('swiper-wrapper');
-      if (project.tutorialImages && project.tutorialImages.length > 0) {
-        project.tutorialImages.forEach(img => { swiperWrapper.innerHTML += `<div class="swiper-slide"><img src="${img.url}" alt="${img.name}"></div>`; });
-        new Swiper(".mySwiper", { navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, pagination: { el: ".swiper-pagination", clickable: true }, keyboard: { enabled: true } });
-      } else {
-        swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
-      }
-
-      // 3. COMPONENTS
-      const compContainer = document.getElementById('components');
-      if (project.components && project.components.trim() !== "") {
-        const lines = project.components.split('\n');
-        let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
-        lines.forEach(line => {
-          if (!line.trim()) return;
-          const parts = line.split('|');
-          if (parts.length >= 2) {
-            const name = parts[0].trim(), link = parts[1].trim(), price = parts.length >= 3 ? parts[2].trim() : "";
-            html += `<div class="list-item"><span style="flex: 1; font-weight: bold; color: #f3f4f6; min-width: 150px;">${name}</span><span style="color: #00cc44; font-weight: bold; margin-right: 15px;">${price}</span><a href="${link}" target="_blank" class="buy-btn">BUY NOW ➔</a></div>`;
-          } else { html += `<div style="color: #9ca3af; padding: 5px;">${line}</div>`; }
-        });
-        compContainer.innerHTML = html + '</div>';
-      } else { compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>'; }
-
-      // 4. STL FILES
-      const stlList = document.getElementById('stl-list');
-      if (project.stlFiles && project.stlFiles.length > 0) {
-        stlList.innerHTML = '';
-        project.stlFiles.forEach((file, index) => {
-          const containerId = 'stl-preview-' + index;
-          const githubPreviewUrl = "https://shukri-ahmad.github.io/MakerPortal/models/" + encodeURIComponent(file.name);
-          stlList.innerHTML += `
-            <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <span style="font-weight: bold;">${file.name}</span>
-                <div style="display: flex; gap: 10px;">
-                  <button onclick="previewSTL('${containerId}', '${githubPreviewUrl}')" class="preview-btn">👁️ PREVIEW</button>
-                  <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️ STL</a>
-                </div>
-              </div>
-              <div id="${containerId}" style="width: 100%; height: 0px; overflow: hidden; transition: height 0.3s; background: #0a0a0a; border-radius: 6px; margin-top: 0px;"></div>
-            </div>`;
-        });
-      } else { stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>'; }
-
-      // 5. DYNAMIC MAKECODE TABS
-      const mkTabsWrapper = document.getElementById('makecode-tabs-wrapper');
-      const mkContentsWrapper = document.getElementById('makecode-contents-wrapper');
-      
-      let makecodeData = project.makecodeLinks;
-
-      // Fallback: If cache still holds the old string version, convert it gracefully to the new array structure
-      if (typeof makecodeData === 'string') {
-        makecodeData = makecodeData.trim() !== '' ? [{ name: 'MakeCode', url: makecodeData }] : [];
-      }
-
-      if (makecodeData && makecodeData.length > 0) {
-        makecodeData.forEach((mk, index) => {
-          const lowerName = mk.name.toLowerCase();
-          
-          // Determine tab name based on Drive file name
-          let tabTitle = 'MakeCode';
-          if (lowerName.includes('robot')) tabTitle = 'MakeCode Robot';
-          else if (lowerName.includes('remote')) tabTitle = 'MakeCode Remote';
-          else if (makecodeData.length > 1) tabTitle = `MakeCode ${index + 1}`; // e.g., MakeCode 1, MakeCode 2
-
-          const tabId = `makecode-dynamic-${index}`;
-
-          // Create the Button
-          const btn = document.createElement('button');
-          btn.className = 'tab-btn';
-          btn.id = `tab-btn-${tabId}`;
-          btn.innerText = tabTitle;
-          btn.onclick = function() { switchTab(tabId, this); };
-          mkTabsWrapper.appendChild(btn);
-
-          // Create the Content
-          const content = document.createElement('div');
-          content.id = tabId;
-          content.className = 'tab-content';
-          content.style.padding = '0';
-          
-          const urlMatch = mk.url.match(/https?:\/\/[^\s]+/);
-          if (urlMatch) {
-            if (urlMatch[0].includes("makecode.microbit.org") || urlMatch[0].includes("makecode.com")) {
-              content.innerHTML = `<iframe src="${urlMatch[0]}" style="width:100%; height:100%; border:none;"></iframe>`;
-            } else {
-              content.innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                  <h3 style="margin-bottom: 20px; color: #f3f4f6;">Code Repository</h3>
-                  <a href="${urlMatch[0]}" target="_blank" class="app-launch-btn" style="background: #1a8cff;">OPEN REPOSITORY ➔</a>
-                </div>`;
-            }
-          } else {
-            content.innerHTML = `<div style="padding: 20px;">${mk.url}</div>`;
-          }
-          mkContentsWrapper.appendChild(content);
-        });
-      } else {
-        // Fallback for no makecode files
-        const btn = document.createElement('button');
-        btn.className = 'tab-btn';
-        btn.id = 'tab-btn-makecode-empty';
-        btn.innerText = 'MakeCode';
-        btn.onclick = function() { switchTab('makecode-empty', this); };
-        mkTabsWrapper.appendChild(btn);
-
-        const content = document.createElement('div');
-        content.id = 'makecode-empty';
-        content.className = 'tab-content';
-        content.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
-        mkContentsWrapper.appendChild(content);
-      }
-
-      // 6. APP LINK
-      if (project.appLink && project.appLink.includes("http")) {
-        document.getElementById('tab-btn-app').style.display = 'inline-block';
-        document.getElementById('app-link-anchor').href = project.appLink;
-      }
-    };
+    window.onload = () => fetchCatalog(false);
   </script>
 </body>
 </html>
