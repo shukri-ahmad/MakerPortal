@@ -41,11 +41,30 @@
     
     .hero-container {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
       width: 100%;
       max-width: 500px; 
     }
     .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
+
+    /* REFRESH BUTTON */
+    .refresh-container { margin-bottom: 2.5rem; text-align: center; }
+    .btn-refresh {
+      background: #111111;
+      border: 1px solid #1a8cff;
+      color: #1a8cff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-refresh:hover { background: #1a8cff; color: #ffffff; }
+    .btn-refresh:disabled { background: #333; color: #777; border-color: #555; cursor: not-allowed; }
 
     /* LOADER ANIMATION */
     #loader { text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -112,13 +131,20 @@
       <img src="makerportal.jpg" alt="MakerPortal - Bridging bytes and build">
     </div>
 
+    <!-- NEW REFRESH BUTTON -->
+    <div class="refresh-container">
+      <button id="refreshBtn" class="btn-refresh" onclick="fetchCatalog(true)">
+        <span>🔄</span> Fetch New Modules
+      </button>
+    </div>
+
     <div id="loader">
       <div class="portal-animation">
         <div class="portal-ring-outer"></div>
         <div class="portal-ring-inner"></div>
         <div class="portal-core"></div>
       </div>
-      <div class="portal-text">Establishing Portal Link...</div>
+      <div class="portal-text" id="loader-text">Establishing Portal Link...</div>
     </div>
 
     <!-- BUILD HUB SECTION -->
@@ -144,21 +170,42 @@
   </footer>
 
   <script>
-    // URL updated based on your provided link
-    const API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
+    const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
-    async function fetchCatalog() {
+    // Now accepts a boolean to determine if we are forcing a refresh
+    async function fetchCatalog(forceRefresh = false) {
       const buildGrid = document.getElementById('build-grid');
       const gameGrid = document.getElementById('game-grid');
       const loader = document.getElementById('loader');
+      const loaderText = document.getElementById('loader-text');
+      const refreshBtn = document.getElementById('refreshBtn');
+
+      // If forcing refresh, reset the UI to loading state
+      if (forceRefresh) {
+        buildGrid.innerHTML = '';
+        gameGrid.innerHTML = '';
+        document.getElementById('build-section').style.display = 'none';
+        document.getElementById('game-section').style.display = 'none';
+        loader.style.display = 'flex';
+        loaderText.innerText = 'Scanning Drive for new modules...';
+        
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<span>⏳</span> Scanning...';
+      }
 
       try {
-        const response = await fetch(API_URL);
+        // Append ?refresh=true if the user clicked the button
+        const fetchUrl = forceRefresh ? `${BASE_API_URL}?refresh=true` : BASE_API_URL;
+        
+        const response = await fetch(fetchUrl);
         const projects = await response.json();
 
-        // CHANGED: Using localStorage so the new tabs can read the memory!
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
         loader.style.display = 'none';
+        
+        // Reset refresh button
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<span>🔄</span> Fetch New Modules';
 
         if (!projects || projects.length === 0) {
           buildGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #9ca3af;">No projects found in the Drive folder.</p>';
@@ -175,18 +222,17 @@
             displayCover = 'https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';
           }
 
-          // SMART SORTING LOGIC
           let isGame = false;
           let displayTitle = project.title;
           
           if (displayTitle.toUpperCase().startsWith('[GAME]')) {
             isGame = true;
-            displayTitle = displayTitle.substring(6).trim(); // Remove the [GAME] tag
+            displayTitle = displayTitle.substring(6).trim(); 
           }
 
           const card = document.createElement('a');
           card.href = `viewer.html?id=${index}`; 
-          card.target = '_blank'; // Opens in a new tab!
+          card.target = '_blank';
           card.className = 'project-card';
           
           card.innerHTML = `
@@ -198,7 +244,6 @@
             </div>
           `;
           
-          // Place the card in the correct section
           if (isGame) {
             gameGrid.appendChild(card);
             document.getElementById('game-section').style.display = 'block';
@@ -212,10 +257,12 @@
         console.error("Error fetching catalog:", error);
         loader.innerHTML = '⚠️ Portal link failed. Check your Apps Script deployment and permissions.';
         loader.style.color = '#e60000';
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<span>🔄</span> Retry Fetch';
       }
     }
 
-    window.onload = fetchCatalog;
+    window.onload = () => fetchCatalog(false);
   </script>
 </body>
 </html>
