@@ -6,12 +6,7 @@
   <title>Workbench | MakerPortal</title>
   
   <link rel="icon" type="image/jpeg" href="makerportal.jpg">
-  
-  <!-- CSS for Swiper -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-
-  <!-- Library for PDF Generation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,12 +31,12 @@
     .swiper-slide { display: flex; justify-content: center; align-items: center; }
     .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    /* Hide Swiper arrows on Mobile */
+    /* Hide Swiper arrows on Mobile, keep them on PC */
     @media (max-width: 768px) {
       .swiper-button-next, .swiper-button-prev { display: none !important; }
     }
 
-    /* FULLSCREEN BUTTON */
+    /* FULLSCREEN BUTTON FOR TUTORIAL */
     .fs-btn {
       position: absolute; top: 15px; right: 15px; z-index: 1000;
       background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid #333;
@@ -53,13 +48,13 @@
     /* PDF DOWNLOAD BUTTON */
     .pdf-btn {
       position: absolute; top: 15px; left: 15px; z-index: 1000;
-      background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid #333;
-      padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
-      display: none; /* Hidden by default */
-      font-weight: bold; transition: background 0.2s;
+      background: rgba(26, 140, 255, 0.9); color: #ffffff; border: 1px solid #0073e6;
+      padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; text-decoration: none;
+      display: none; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: background 0.2s, transform 0.2s;
     }
-    .pdf-btn:hover { background: #00cc44; border-color: #00cc44; }
-    .pdf-btn:disabled { background: #555; color: #999; border-color: #444; cursor: not-allowed; }
+    .pdf-btn:hover { background: #0073e6; transform: scale(1.05); }
 
     #tutorial:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
     #tutorial:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
@@ -97,7 +92,6 @@
   </div>
 
   <div id="tutorial" class="tab-content active" style="padding: 0; position: relative;">
-    <button id="download-pdf-btn" class="pdf-btn">📄 DOWNLOAD PDF</button>
     <button id="fullscreen-btn" class="fs-btn">⛶</button>
     
     <div class="swiper mySwiper">
@@ -119,7 +113,6 @@
     <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
   </div>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
@@ -152,81 +145,12 @@
       }
     });
 
-    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) fsBtn.innerText = "⛶"; });
-    document.addEventListener('webkitfullscreenchange', () => { if (!document.webkitFullscreenElement) fsBtn.innerText = "⛶"; });
-
-    // --- PDF GENERATOR LOGIC ---
-    async function downloadTutorialPDF(images, title) {
-      const btn = document.getElementById('download-pdf-btn');
-      const originalText = btn.innerText;
-      btn.innerText = '⏳ GENERATING...';
-      btn.disabled = true;
-
-      try {
-        const { jsPDF } = window.jspdf;
-        // Create an A4 PDF in Landscape mode (perfect for slides)
-        const pdf = new jsPDF('l', 'mm', 'a4');
-
-        for (let i = 0; i < images.length; i++) {
-          const img = new Image();
-          img.crossOrigin = 'Anonymous'; // Required for canvas export
-          
-          // We use a proxy to strip Google Drive's CORS security block so we can generate the PDF
-          const proxyUrl = "https://corsproxy.io/?";
-          img.src = proxyUrl + encodeURIComponent(images[i].url);
-          
-          await new Promise((resolve, reject) => {
-            img.onload = resolve;
-            img.onerror = () => {
-              console.warn("Proxy failed, attempting direct URL fallback...");
-              img.src = images[i].url; // Fallback just in case
-              img.onload = resolve;
-              img.onerror = () => reject(new Error("Image Load Failed"));
-            };
-          });
-
-          // Draw the image onto a hidden canvas to extract raw JPEG data
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          
-          // Extract the image data securely
-          const imgData = canvas.toDataURL('image/jpeg', 0.8);
-
-          if (i > 0) pdf.addPage();
-
-          // Calculate aspect ratio so the image fits perfectly on the PDF page
-          const pdfWidth = pdf.internal.pageSize.getWidth();
-          const pdfHeight = pdf.internal.pageSize.getHeight();
-          const ratio = img.width / img.height;
-          
-          let width = pdfWidth;
-          let height = pdfWidth / ratio;
-          
-          if (height > pdfHeight) {
-            height = pdfHeight;
-            width = height * ratio;
-          }
-          
-          // Center the image
-          const x = (pdfWidth - width) / 2;
-          const y = (pdfHeight - height) / 2;
-
-          pdf.addImage(imgData, 'JPEG', x, y, width, height);
-        }
-
-        // Save the generated file!
-        pdf.save(`${title} - Manual.pdf`);
-      } catch (error) {
-        console.error("PDF Generation Error:", error);
-        alert("Failed to generate PDF. Google Drive's security settings blocked the export.");
-      } finally {
-        btn.innerText = originalText;
-        btn.disabled = false;
-      }
-    }
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) fsBtn.innerText = "⛶";
+    });
+    document.addEventListener('webkitfullscreenchange', () => {
+      if (!document.webkitFullscreenElement) fsBtn.innerText = "⛶";
+    });
 
     // --- 3D STL PREVIEWER LOGIC ---
     window.previewSTL = function(containerId, fileUrl) {
@@ -270,7 +194,6 @@
       btnElement.classList.add('active');
     }
 
-    // --- DATA POPULATION ---
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
@@ -302,19 +225,22 @@
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
       }
 
-      // 2. TUTORIAL SLIDES
+      // 2. TUTORIAL SLIDES & PDF BUTTON
       const swiperWrapper = document.getElementById('swiper-wrapper');
-      const pdfBtn = document.getElementById('download-pdf-btn');
+      
+      // Inject PDF button if it's NOT a game, and a PDF was found!
+      if (!isGame && project.tutorialPdf) {
+        const pdfBtn = document.createElement('a');
+        pdfBtn.href = project.tutorialPdf;
+        pdfBtn.target = "_blank";
+        pdfBtn.className = "pdf-btn";
+        pdfBtn.innerHTML = "📄 PDF";
+        pdfBtn.style.display = "block";
+        document.getElementById('tutorial').appendChild(pdfBtn);
+      }
 
       if (project.tutorialImages && project.tutorialImages.length > 0) {
         fsBtn.style.display = 'block'; 
-        
-        // Show PDF button ONLY if it is not a GAME module
-        if (!isGame) {
-          pdfBtn.style.display = 'block';
-          pdfBtn.onclick = () => downloadTutorialPDF(project.tutorialImages, displayTitle);
-        }
-
         project.tutorialImages.forEach(img => { 
           swiperWrapper.innerHTML += `
             <div class="swiper-slide">
