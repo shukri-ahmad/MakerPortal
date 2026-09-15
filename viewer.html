@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workbench | MakerPortal</title>
   
-  <!-- FAVICON UPDATED TO MAKERPORTAL.JPG -->
   <link rel="icon" type="image/jpeg" href="makerportal.jpg">
+  
+  <!-- CSS for Swiper -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+  <!-- Library for PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,12 +36,12 @@
     .swiper-slide { display: flex; justify-content: center; align-items: center; }
     .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-    /* Hide Swiper arrows on Mobile, keep them on PC */
+    /* Hide Swiper arrows on Mobile */
     @media (max-width: 768px) {
       .swiper-button-next, .swiper-button-prev { display: none !important; }
     }
 
-    /* FULLSCREEN BUTTON FOR TUTORIAL */
+    /* FULLSCREEN BUTTON */
     .fs-btn {
       position: absolute; top: 15px; right: 15px; z-index: 1000;
       background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid #333;
@@ -45,6 +49,17 @@
       display: none; 
     }
     .fs-btn:hover { background: #1a8cff; border-color: #1a8cff; }
+
+    /* PDF DOWNLOAD BUTTON */
+    .pdf-btn {
+      position: absolute; top: 15px; left: 15px; z-index: 1000;
+      background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid #333;
+      padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;
+      display: none; /* Hidden by default */
+      font-weight: bold; transition: background 0.2s;
+    }
+    .pdf-btn:hover { background: #00cc44; border-color: #00cc44; }
+    .pdf-btn:disabled { background: #555; color: #999; border-color: #444; cursor: not-allowed; }
 
     #tutorial:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
     #tutorial:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
@@ -82,7 +97,9 @@
   </div>
 
   <div id="tutorial" class="tab-content active" style="padding: 0; position: relative;">
+    <button id="download-pdf-btn" class="pdf-btn">📄 DOWNLOAD PDF</button>
     <button id="fullscreen-btn" class="fs-btn">⛶</button>
+    
     <div class="swiper mySwiper">
       <div class="swiper-wrapper" id="swiper-wrapper"></div>
       <div class="swiper-button-next" style="color: #1a8cff;"></div>
@@ -102,6 +119,7 @@
     <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
@@ -134,12 +152,71 @@
       }
     });
 
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) fsBtn.innerText = "⛶";
-    });
-    document.addEventListener('webkitfullscreenchange', () => {
-      if (!document.webkitFullscreenElement) fsBtn.innerText = "⛶";
-    });
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) fsBtn.innerText = "⛶"; });
+    document.addEventListener('webkitfullscreenchange', () => { if (!document.webkitFullscreenElement) fsBtn.innerText = "⛶"; });
+
+    // --- PDF GENERATOR LOGIC ---
+    async function downloadTutorialPDF(images, title) {
+      const btn = document.getElementById('download-pdf-btn');
+      const originalText = btn.innerText;
+      btn.innerText = '⏳ GENERATING...';
+      btn.disabled = true;
+
+      try {
+        const { jsPDF } = window.jspdf;
+        // Create an A4 PDF in Landscape mode (perfect for slides)
+        const pdf = new jsPDF('l', 'mm', 'a4');
+
+        for (let i = 0; i < images.length; i++) {
+          const img = new Image();
+          img.crossOrigin = 'Anonymous'; // Bypasses standard CORS block
+          img.src = images[i].url;
+          
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = () => reject(new Error("Image Load Failed"));
+          });
+
+          // Draw the image onto a hidden canvas to extract raw JPEG data
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imgData = canvas.toDataURL('image/jpeg', 0.8);
+
+          if (i > 0) pdf.addPage();
+
+          // Calculate aspect ratio so the image fits perfectly on the PDF page
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          const ratio = img.width / img.height;
+          
+          let width = pdfWidth;
+          let height = pdfWidth / ratio;
+          
+          if (height > pdfHeight) {
+            height = pdfHeight;
+            width = height * ratio;
+          }
+          
+          // Center the image
+          const x = (pdfWidth - width) / 2;
+          const y = (pdfHeight - height) / 2;
+
+          pdf.addImage(imgData, 'JPEG', x, y, width, height);
+        }
+
+        // Save the generated file!
+        pdf.save(`${title} - Manual.pdf`);
+      } catch (error) {
+        console.error("PDF Generation Error:", error);
+        alert("Failed to generate PDF. Your browser might be blocking the downloads.");
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    }
 
     // --- 3D STL PREVIEWER LOGIC ---
     window.previewSTL = function(containerId, fileUrl) {
@@ -183,6 +260,7 @@
       btnElement.classList.add('active');
     }
 
+    // --- DATA POPULATION ---
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
@@ -214,10 +292,19 @@
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
       }
 
-      // 2. TUTORIAL SLIDES (Now with swiper-zoom-container!)
+      // 2. TUTORIAL SLIDES
       const swiperWrapper = document.getElementById('swiper-wrapper');
+      const pdfBtn = document.getElementById('download-pdf-btn');
+
       if (project.tutorialImages && project.tutorialImages.length > 0) {
         fsBtn.style.display = 'block'; 
+        
+        // Show PDF button ONLY if it is not a GAME module
+        if (!isGame) {
+          pdfBtn.style.display = 'block';
+          pdfBtn.onclick = () => downloadTutorialPDF(project.tutorialImages, displayTitle);
+        }
+
         project.tutorialImages.forEach(img => { 
           swiperWrapper.innerHTML += `
             <div class="swiper-slide">
@@ -227,7 +314,6 @@
             </div>`; 
         });
         
-        // ZOOM ENABLED HERE
         new Swiper(".mySwiper", { 
           zoom: true, 
           navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, 
