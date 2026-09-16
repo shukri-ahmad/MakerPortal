@@ -48,13 +48,13 @@
     /* PDF DOWNLOAD BUTTON */
     .pdf-btn {
       position: absolute; top: 15px; left: 15px; z-index: 1000;
-      background: rgba(26, 140, 255, 0.9); color: #ffffff; border: 1px solid #0073e6;
-      padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; text-decoration: none;
+      background: rgba(230, 0, 0, 0.9); color: #ffffff; border: 1px solid #cc0000;
+      padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-decoration: none;
       display: none; 
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       transition: background 0.2s, transform 0.2s;
     }
-    .pdf-btn:hover { background: #0073e6; transform: scale(1.05); }
+    .pdf-btn:hover { background: #ff1a1a; transform: scale(1.05); }
 
     #tutorial:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
     #tutorial:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
@@ -70,6 +70,10 @@
     .buy-btn:hover { background: #0073e6; }
     .preview-btn { background: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; font-weight: bold; }
     .preview-btn:hover { background: #444; }
+    
+    /* Section headers inside Equipment Tab */
+    .equip-header { color: #1a8cff; margin: 25px 0 15px 0; border-bottom: 1px solid #333; padding-bottom: 5px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+    .equip-header:first-child { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -85,6 +89,9 @@
     <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
     <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
     <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
+    
+    <!-- NEW: Equipment Tab for Games -->
+    <button class="tab-btn" id="tab-btn-equipment" style="display: none;" onclick="switchTab('equipment', this)">Equipment</button>
     
     <div id="makecode-tabs-wrapper" style="display: contents;"></div>
 
@@ -104,6 +111,14 @@
 
   <div id="components" class="tab-content">Loading...</div>
   <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
+
+  <!-- NEW: Combined Equipment Content Container -->
+  <div id="equipment" class="tab-content">
+    <h3 class="equip-header">🛠️ Parts & Links</h3>
+    <div id="equipment-components">Loading...</div>
+    <h3 class="equip-header">🧊 3D Print Files (STL)</h3>
+    <div id="equipment-stl">Loading...</div>
+  </div>
 
   <div id="makecode-contents-wrapper" style="display: contents;"></div>
 
@@ -214,12 +229,20 @@
       displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
       document.getElementById('project-title').innerText = displayTitle;
 
+      // 1. DYNAMIC TAB CONFIGURATION
       if (isGame) {
-        document.getElementById('tab-btn-tutorial').innerText = 'Manual';
+        document.getElementById('tab-btn-tutorial').innerText = 'Tutorials';
+        
+        // Hide regular tabs
         document.getElementById('tab-btn-components').style.display = 'none';
         document.getElementById('tab-btn-stl').style.display = 'none';
         document.getElementById('makecode-tabs-wrapper').style.display = 'none';
+        
+        // Show Equipment & Game Management tabs
+        document.getElementById('tab-btn-equipment').style.display = 'inline-block';
+        document.getElementById('tab-btn-app').style.display = 'inline-block';
         document.getElementById('tab-btn-app').innerText = 'Game Management';
+        
         document.getElementById('app-heading').innerText = 'Game Management System';
         document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
@@ -228,13 +251,13 @@
       // 2. TUTORIAL SLIDES & PDF BUTTON
       const swiperWrapper = document.getElementById('swiper-wrapper');
       
-      // Inject PDF button if it's NOT a game, and a PDF was found!
-      if (!isGame && project.tutorialPdf) {
+      // FIXED: PDF Button now displays for Games too if a PDF is found!
+      if (project.tutorialPdf) {
         const pdfBtn = document.createElement('a');
         pdfBtn.href = project.tutorialPdf;
         pdfBtn.target = "_blank";
         pdfBtn.className = "pdf-btn";
-        pdfBtn.innerHTML = "📄 PDF";
+        pdfBtn.innerHTML = "📄 Download PDF";
         pdfBtn.style.display = "block";
         document.getElementById('tutorial').appendChild(pdfBtn);
       }
@@ -260,13 +283,15 @@
         swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
       }
 
-      // 3. COMPONENTS
-      const compContainer = document.getElementById('components');
+      // 3. COMPONENTS (Route to Equipment tab if Game, else Components tab)
+      const compContainer = document.getElementById(isGame ? 'equipment-components' : 'components');
       if (project.components && project.components.trim() !== "") {
         const lines = project.components.split('\n');
         let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
         lines.forEach(line => {
-          if (!line.trim()) return;
+          // Ignore raw metadata lines injected for index.html parsing
+          if (!line.trim() || line.toLowerCase().includes('buy link:') || line.toLowerCase().includes('stl link:')) return;
+          
           const parts = line.split('|');
           if (parts.length >= 2) {
             const name = parts[0].trim(), link = parts[1].trim(), price = parts.length >= 3 ? parts[2].trim() : "";
@@ -276,8 +301,8 @@
         compContainer.innerHTML = html + '</div>';
       } else { compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>'; }
 
-      // 4. STL FILES
-      const stlList = document.getElementById('stl-list');
+      // 4. STL FILES (Route to Equipment tab if Game, else STL tab)
+      const stlList = document.getElementById(isGame ? 'equipment-stl' : 'stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
@@ -347,18 +372,21 @@
           mkContentsWrapper.appendChild(content);
         });
       } else {
-        const btn = document.createElement('button');
-        btn.className = 'tab-btn';
-        btn.id = 'tab-btn-makecode-empty';
-        btn.innerText = 'MakeCode';
-        btn.onclick = function() { switchTab('makecode-empty', this); };
-        mkTabsWrapper.appendChild(btn);
+        // Only generate the empty MakeCode tab if it's NOT a game
+        if (!isGame) {
+          const btn = document.createElement('button');
+          btn.className = 'tab-btn';
+          btn.id = 'tab-btn-makecode-empty';
+          btn.innerText = 'MakeCode';
+          btn.onclick = function() { switchTab('makecode-empty', this); };
+          mkTabsWrapper.appendChild(btn);
 
-        const content = document.createElement('div');
-        content.id = 'makecode-empty';
-        content.className = 'tab-content';
-        content.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
-        mkContentsWrapper.appendChild(content);
+          const content = document.createElement('div');
+          content.id = 'makecode-empty';
+          content.className = 'tab-content';
+          content.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
+          mkContentsWrapper.appendChild(content);
+        }
       }
 
       // 6. APP LINK
