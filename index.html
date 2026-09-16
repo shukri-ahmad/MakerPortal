@@ -8,6 +8,9 @@
   <!-- FAVICON UPDATED TO MAKERPORTAL.JPG -->
   <link rel="icon" type="image/jpeg" href="makerportal.jpg">
 
+  <!-- STL Viewer Script via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/stl_viewer/dist/stl_viewer.min.js"></script>
+
   <style>
     * { box-sizing: border-box; }
     
@@ -116,14 +119,41 @@
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
     .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
     .card-image { width: 100%; height: 180px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
-    .card-content { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .card-content h3 { margin: 0; font-size: 1.1rem; color: #f9fafb; }
+    .stl-container { width: 100%; height: 180px; background: #1a1a1a; border-bottom: 1px solid #333333; cursor: grab; }
+    .card-content { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; }
+    .card-header h3 { margin: 0; font-size: 1.1rem; color: #f9fafb; }
     
-    .card-btn { background: #1a8cff; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
+    .card-btn { background: #1a8cff; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; text-align: center; }
     .btn-play { background: #e60000; }
+    .btn-buy { background: #ffcc00; color: #000; text-decoration: none; display: block; padding: 8px; border-radius: 6px; font-weight: bold; text-align: center; transition: background 0.2s; }
+    .btn-buy:hover { background: #e6b800; }
+
+    /* FLOATING PDF BUTTON (ON CARD) */
+    .floating-pdf-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(230, 0, 0, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: transform 0.2s, background 0.2s;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+    .floating-pdf-btn:hover {
+      background: #ff1a1a;
+      transform: scale(1.05);
+    }
 
     footer {
       background: #050505; border-top: 1px solid #1a1a1a; padding: 1.5rem 1rem; text-align: center; margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -151,6 +181,12 @@
         <div class="portal-core"></div>
       </div>
       <div class="portal-text" id="loader-text">Establishing Portal Link...</div>
+    </div>
+
+    <!-- EQUIPMENTS SECTION (NEW) -->
+    <div class="section-container" id="equipment-section" style="display: none;">
+      <h2 class="section-title">🛠️ EQUIPMENTS & PARTS</h2>
+      <div class="catalog-grid" id="equipment-grid"></div>
     </div>
 
     <!-- BUILD HUB SECTION -->
@@ -182,10 +218,12 @@
 
   <script>
     const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
+    let stlViewers = [];
 
     async function fetchCatalog(forceRefresh = false) {
       const buildGrid = document.getElementById('build-grid');
       const gameGrid = document.getElementById('game-grid');
+      const equipmentGrid = document.getElementById('equipment-grid');
       const loader = document.getElementById('loader');
       const loaderText = document.getElementById('loader-text');
       const refreshBtn = document.getElementById('refreshBtn');
@@ -193,8 +231,10 @@
       if (forceRefresh) {
         buildGrid.innerHTML = '';
         gameGrid.innerHTML = '';
+        equipmentGrid.innerHTML = '';
         document.getElementById('build-section').style.display = 'none';
         document.getElementById('game-section').style.display = 'none';
+        document.getElementById('equipment-section').style.display = 'none';
         loader.style.display = 'flex';
         loaderText.innerText = 'Scanning Drive for new modules...';
         
@@ -233,35 +273,89 @@
           }
 
           let isGame = false;
+          let isEquipment = false;
           let displayTitle = project.title;
           
+          // Categorize based on folder name tags
           if (displayTitle.toUpperCase().includes('[GAME]')) {
             isGame = true;
             displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
+          } else if (displayTitle.toUpperCase().includes('[EQUIPMENT]')) {
+            isEquipment = true;
+            displayTitle = displayTitle.replace(/\[EQUIPMENT\]/i, '').trim(); 
           }
           
           displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
-          const card = document.createElement('a');
-          card.href = `viewer.html?id=${index}`; 
-          card.target = '_blank';
+          // Generate PDF Floating Button if PDF exists
+          let pdfHtml = '';
+          if (project.pdfUrl) {
+            pdfHtml = `<a href="${project.pdfUrl}" target="_blank" class="floating-pdf-btn" onclick="event.stopPropagation();">📄 Download PDF</a>`;
+          }
+
+          const card = document.createElement(isEquipment ? 'div' : 'a');
+          if (!isEquipment) {
+            card.href = `viewer.html?id=${index}`; 
+            card.target = '_blank';
+          }
           card.className = 'project-card';
           
-          card.innerHTML = `
-            <img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy" 
-                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
-            <div class="card-content">
-              <h3>${displayTitle}</h3>
-              <span class="card-btn ${isGame ? 'btn-play' : ''}">${isGame ? 'Play ➔' : 'Build ➔'}</span>
-            </div>
-          `;
-          
-          if (isGame) {
-            gameGrid.appendChild(card);
-            document.getElementById('game-section').style.display = 'block';
+          // Equipment cards get 3D Previews and Buy Links. Others get standard images.
+          if (isEquipment) {
+            let mediaHtml = project.stlUrl 
+              ? `<div id="stl-${index}" class="stl-container"></div>` 
+              : `<img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy">`;
+
+            let buyHtml = project.buyLink 
+              ? `<a href="${project.buyLink}" target="_blank" class="btn-buy">🛒 Buy Parts Here</a>`
+              : `<span style="color: #666; font-size: 0.8rem; text-align: center;">No parts link available</span>`;
+
+            card.innerHTML = `
+              ${pdfHtml}
+              ${mediaHtml}
+              <div class="card-content">
+                <div class="card-header">
+                  <h3>${displayTitle}</h3>
+                </div>
+                ${buyHtml}
+              </div>
+            `;
+            
+            equipmentGrid.appendChild(card);
+            document.getElementById('equipment-section').style.display = 'block';
+
+            // Initialize STL viewer if URL exists
+            if (project.stlUrl) {
+              setTimeout(() => {
+                stlViewers.push(new StlViewer(document.getElementById(`stl-${index}`), { 
+                  models: [ { id: index, filename: project.stlUrl, color: "#1a8cff" } ],
+                  auto_rotate: true,
+                  bgcolor: "#1a1a1a"
+                }));
+              }, 100);
+            }
+
           } else {
-            buildGrid.appendChild(card);
-            document.getElementById('build-section').style.display = 'block';
+            // Standard Game/Build Card
+            card.innerHTML = `
+              ${pdfHtml}
+              <img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy" 
+                   onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
+              <div class="card-content">
+                <div class="card-header" style="width: 100%;">
+                  <h3>${displayTitle}</h3>
+                  <span class="card-btn ${isGame ? 'btn-play' : ''}">${isGame ? 'Play ➔' : 'Build ➔'}</span>
+                </div>
+              </div>
+            `;
+            
+            if (isGame) {
+              gameGrid.appendChild(card);
+              document.getElementById('game-section').style.display = 'block';
+            } else {
+              buildGrid.appendChild(card);
+              document.getElementById('build-section').style.display = 'block';
+            }
           }
         });
 
