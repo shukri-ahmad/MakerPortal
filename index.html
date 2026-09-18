@@ -86,10 +86,12 @@
     }
     .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
     
-    /* 🌟 Adjusted card image height proportionally for the smaller 70% cards */
+    /* 🌟 Adjusted card image height proportionally for the smaller cards */
     .card-image { width: 100%; height: 140px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
     
     .card-content { padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+    
+    /* Prevent long titles from breaking the smaller cards */
     .card-content h3 { margin: 0; font-size: 1rem; color: #f9fafb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 10px; }
     
     .card-btn { background: #1a8cff; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; flex-shrink: 0; }
@@ -101,7 +103,7 @@
     .footer-makerspace-logo { height: 30px; width: auto; border-radius: 4px; }
     .footer-brand { color: #f3f4f6; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
 
-    /* For extra small phones, ensure it drops down to 1 column neatly */
+    /* For extra small phones, ensure it drops down to 2 or 1 column neatly */
     @media (max-width: 480px) {
       .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
       .card-image { height: 120px; }
@@ -172,6 +174,7 @@
         const response = await fetch(fetchUrl);
         let projects = await response.json();
 
+        // Sort projects by number/name
         projects.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
 
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
