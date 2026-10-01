@@ -11,40 +11,18 @@
     * { box-sizing: border-box; }
     
     body { 
-      margin: 0; 
-      padding: 0; 
-      background: #000000; 
-      color: #ffffff; 
-      font-family: sans-serif; 
-      min-height: 100vh;
-      display: flex; 
-      flex-direction: column;
+      margin: 0; padding: 0; background: #000000; color: #ffffff; 
+      font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column;
     }
 
-    .top-accent {
-      height: 4px;
-      width: 100%;
-      background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000);
-      flex-shrink: 0;
-    }
+    .top-accent { height: 4px; width: 100%; background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000); flex-shrink: 0; }
 
     main {
-      padding: 2rem 1.5rem;
-      flex: 1;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 2rem 1.5rem; flex: 1; max-width: 1200px; margin: 0 auto;
+      width: 100%; display: flex; flex-direction: column; align-items: center;
     }
     
-    .hero-container {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      width: 100%;
-      max-width: 500px; 
-    }
+    .hero-container { text-align: center; margin-bottom: 2.5rem; width: 100%; max-width: 500px; }
     .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
 
     .btn-refresh {
@@ -76,7 +54,6 @@
       margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px;
     }
 
-    /* 🌟 DYNAMIC SNAPSHOT GRID - Reduced to ~70% size, auto-populating based on screen width */
     .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; width: 100%; }
 
     .project-card {
@@ -85,14 +62,14 @@
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; display: flex; flex-direction: column;
     }
     .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
-    
-    /* 🌟 Adjusted card image height proportionally for the smaller cards */
     .card-image { width: 100%; height: 140px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
     
-    .card-content { padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-    
-    /* Prevent long titles from breaking the smaller cards */
-    .card-content h3 { margin: 0; font-size: 1rem; color: #f9fafb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 10px; }
+    .card-content { padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .card-content h3 { 
+      margin: 0; font-size: 1rem; color: #f9fafb; 
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; 
+      overflow: hidden; white-space: normal; line-height: 1.3;
+    }
     
     .card-btn { background: #1a8cff; color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; flex-shrink: 0; }
     .btn-play { background: #e60000; }
@@ -103,7 +80,6 @@
     .footer-makerspace-logo { height: 30px; width: auto; border-radius: 4px; }
     .footer-brand { color: #f3f4f6; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
 
-    /* For extra small phones, ensure it drops down to 2 or 1 column neatly */
     @media (max-width: 480px) {
       .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
       .card-image { height: 120px; }
@@ -158,14 +134,15 @@
       const buildGrid = document.getElementById('build-grid');
       const gameGrid = document.getElementById('game-grid');
       const loader = document.getElementById('loader');
-      const loaderText = document.getElementById('loader-text');
       const refreshBtn = document.getElementById('refreshBtn');
 
       if (forceRefresh) {
         buildGrid.innerHTML = ''; gameGrid.innerHTML = '';
         document.getElementById('build-section').style.display = 'none';
         document.getElementById('game-section').style.display = 'none';
-        loader.style.display = 'flex'; loaderText.innerText = 'Scanning Drive for new modules...';
+        
+        loader.style.display = 'flex'; 
+        document.getElementById('loader-text').innerText = 'Scanning Drive for new modules...';
         refreshBtn.disabled = true; refreshBtn.innerHTML = '<span>⏳</span> Scanning...';
       }
 
@@ -174,10 +151,9 @@
         const response = await fetch(fetchUrl);
         let projects = await response.json();
 
-        // Sort projects by number/name
         projects.sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true }));
-
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
+        
         loader.style.display = 'none';
         refreshBtn.disabled = false; refreshBtn.innerHTML = '<span>🔄</span> Fetch New Modules';
 
@@ -198,6 +174,7 @@
           if (displayTitle.toUpperCase().includes('[GAME]')) {
             isGame = true; displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
           }
+          
           displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
           const card = document.createElement('a');
