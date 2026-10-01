@@ -60,36 +60,37 @@
       background: #111111; border: 1px solid #333333; border-radius: 10px;
       overflow: hidden; text-decoration: none; color: white;
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; 
-      display: flex; flex-direction: column;
+      display: flex; flex-direction: column; 
+      position: relative; /* 🌟 Added relative for the badge absolute positioning */
     }
     .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
     .card-image { width: 100%; height: 140px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
     
+    /* 🌟 NEW BADGE & DATE TEXT STYLES */
+    .badge-update {
+      position: absolute; top: 8px; right: 8px; background: #00cc44; color: #ffffff;
+      padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10; letter-spacing: 0.5px;
+    }
+    .update-text {
+      font-size: 0.75rem; color: #9ca3af; margin-bottom: 12px; font-style: italic;
+    }
+
     .card-content { 
-      padding: 15px; 
-      display: flex; 
-      flex-direction: column; 
-      flex: 1; 
+      padding: 15px; display: flex; flex-direction: column; flex: 1; align-items: center; 
     }
     
     .card-content h3 { 
-      margin: 0 0 15px 0; 
-      font-size: 1.05rem; 
-      color: #f9fafb; 
+      margin: 0 0 5px 0; /* Reduced margin to fit date underneath */
+      font-size: 1.05rem; color: #f9fafb; 
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; 
-      overflow: hidden; white-space: normal; line-height: 1.4;
-      text-align: justify; /* 🌟 ADDED TEXT JUSTIFY */
+      overflow: hidden; white-space: normal; line-height: 1.4; text-align: center; 
     }
     
     .card-btn { 
-      background: #1a8cff; 
-      color: white; 
-      padding: 8px 12px; 
-      border-radius: 6px; 
-      font-size: 0.8rem; 
-      font-weight: bold; 
-      margin-top: auto; 
-      align-self: flex-start; 
+      background: #1a8cff; color: white; padding: 8px 12px; 
+      border-radius: 6px; font-size: 0.8rem; font-weight: bold; 
+      margin-top: auto; align-self: center; 
     }
     .btn-play { background: #e60000; }
 
@@ -196,13 +197,35 @@
           
           displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
+          // 🌟 NEW: Calculate Date and Highlight Logic
+          let dateHtml = '';
+          let badgeHtml = '';
+          
+          if (project.lastUpdated) {
+            const updatedDate = new Date(project.lastUpdated);
+            const dateOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+            const dateString = updatedDate.toLocaleDateString('en-GB', dateOptions);
+            
+            dateHtml = `<div class="update-text">Updated: ${dateString}</div>`;
+            
+            // Check if updated in the last 14 days
+            const now = new Date();
+            const diffDays = Math.ceil(Math.abs(now - updatedDate) / (1000 * 60 * 60 * 24));
+            if (diffDays <= 14) {
+              badgeHtml = `<div class="badge-update">NEWLY UPDATED</div>`;
+            }
+          }
+
           const card = document.createElement('a');
           card.href = `viewer.html?id=${index}`; card.target = '_blank'; card.className = 'project-card';
           
+          // 🌟 Insert Date HTML and Badge HTML into Card
           card.innerHTML = `
+            ${badgeHtml}
             <img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
             <div class="card-content">
               <h3>${displayTitle}</h3>
+              ${dateHtml}
               <span class="card-btn ${isGame ? 'btn-play' : ''}">${isGame ? 'Play ➔' : 'Build ➔'}</span>
             </div>
           `;
