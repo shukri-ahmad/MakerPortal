@@ -49,7 +49,6 @@
     }
     .pdf-btn:hover { background: #0073e6; transform: scale(1.05); }
 
-    /* Fix fullscreen logic across multiple containers */
     .gallery-container:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
     .gallery-container:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
 
@@ -80,7 +79,7 @@
     <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
     
     <!-- Game Tabs -->
-    <button class="tab-btn" id="tab-btn-organizer" style="display: none;" onclick="switchTab('organizer', this)">Organizer Guide</button>
+    <button class="tab-btn" id="tab-btn-game-manual" style="display: none;" onclick="switchTab('game-manual', this)">Game Manual</button>
     <button class="tab-btn" id="tab-btn-apps-manual" style="display: none;" onclick="switchTab('apps-manual', this)">Apps Manual</button>
     
     <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
@@ -103,11 +102,11 @@
     </div>
   </div>
 
-  <!-- Organizer Container (Game) -->
-  <div id="organizer" class="tab-content gallery-container" style="padding: 0; position: relative;">
-    <button id="fs-btn-organizer" class="fs-btn" onclick="toggleFS('organizer', 'fs-btn-organizer')">⛶</button>
-    <div class="swiper mySwiper" id="swiper-organizer">
-      <div class="swiper-wrapper" id="wrapper-organizer"></div>
+  <!-- Game Manual Container (Game) -->
+  <div id="game-manual" class="tab-content gallery-container" style="padding: 0; position: relative;">
+    <button id="fs-btn-game-manual" class="fs-btn" onclick="toggleFS('game-manual', 'fs-btn-game-manual')">⛶</button>
+    <div class="swiper mySwiper" id="swiper-game-manual">
+      <div class="swiper-wrapper" id="wrapper-game-manual"></div>
       <div class="swiper-button-next" style="color: #1a8cff;"></div>
       <div class="swiper-button-prev" style="color: #1a8cff;"></div>
       <div class="swiper-pagination"></div>
@@ -141,7 +140,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // --- FULLSCREEN LOGIC REBUILT FOR MULTIPLE CONTAINERS ---
+    // --- FULLSCREEN LOGIC ---
     function toggleFS(containerId, btnId) {
       const container = document.getElementById(containerId);
       const btn = document.getElementById(btnId);
@@ -244,15 +243,15 @@
       if (isGame) {
         // UI Toggles for Game Mode
         document.getElementById('tab-btn-tutorial').style.display = 'none';
-        document.getElementById('tab-btn-organizer').style.display = 'block';
+        document.getElementById('tab-btn-game-manual').style.display = 'block';
         document.getElementById('tab-btn-apps-manual').style.display = 'block';
         document.getElementById('makecode-tabs-wrapper').style.display = 'none';
         
-        // Force Organizer Guide as the active tab on load
+        // Force Game Manual as the active tab on load
         document.getElementById('tutorial').classList.remove('active');
         document.getElementById('tab-btn-tutorial').classList.remove('active');
-        document.getElementById('organizer').classList.add('active');
-        document.getElementById('tab-btn-organizer').classList.add('active');
+        document.getElementById('game-manual').classList.add('active');
+        document.getElementById('tab-btn-game-manual').classList.add('active');
 
         document.getElementById('tab-btn-app').innerText = 'Apps';
         document.getElementById('app-heading').innerText = 'Game Management System';
@@ -260,7 +259,7 @@
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
 
         // Build Game Galleries
-        buildGallery('organizer', 'wrapper-organizer', project.organizerImages, project.organizerPdf, 'No Organizer Guide files found.', 'fs-btn-organizer');
+        buildGallery('game-manual', 'wrapper-game-manual', project.gameManualImages, project.gameManualPdf, 'No Game Manual files found.', 'fs-btn-game-manual');
         buildGallery('apps-manual', 'wrapper-apps-manual', project.appsManualImages, project.appsManualPdf, 'No Apps Manual files found.', 'fs-btn-apps-manual');
 
       } else {
@@ -297,7 +296,7 @@
                 <span style="font-weight: bold;">${file.name}</span>
                 <div style="display: flex; gap: 10px;">
                   <button onclick="previewSTL('${containerId}', '${githubPreviewUrl}')" class="preview-btn">👁️ PREVIEW</button>
-                  <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️️ STL</a>
+                  <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇ STL</a>
                 </div>
               </div>
               <div id="${containerId}" style="width: 100%; height: 0px; overflow: hidden; transition: height 0.3s; background: #0a0a0a; border-radius: 6px; margin-top: 0px;"></div>
@@ -305,7 +304,7 @@
         });
       } else { stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>'; }
 
-      // 5. DYNAMIC MAKECODE TABS (Hidden for Games, but generated anyway)
+      // 5. DYNAMIC MAKECODE TABS
       const mkTabsWrapper = document.getElementById('makecode-tabs-wrapper');
       const mkContentsWrapper = document.getElementById('makecode-contents-wrapper');
       let makecodeData = project.makecodeLinks;
