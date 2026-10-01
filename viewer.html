@@ -11,16 +11,14 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    body {
-      background: #000000; color: #ffffff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden;
-    }
+    body { background: #000000; color: #ffffff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
     .top-accent { height: 4px; width: 100%; background: linear-gradient(90deg, #1a8cff, #00cc44, #ffcc00, #e60000); flex-shrink: 0; }
     header { background: #050505; border-bottom: 1px solid #1a1a1a; padding: 10px 20px; display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
     .back-btn { color: #1a8cff; text-decoration: none; font-weight: bold; font-size: 1.2rem; }
     .project-title { font-size: 1.2rem; font-weight: bold; color: #f3f4f6; }
 
     .tabs-nav { display: flex; background: #111111; border-bottom: 2px solid #333333; flex-shrink: 0; overflow-x: auto; }
-    .tab-btn { flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px; }
+    .tab-btn { flex: 1; background: none; border: none; color: #9ca3af; padding: 15px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 90px; white-space: nowrap; }
     .tab-btn:hover { color: #ffffff; background: #1a1a1a; }
     .tab-btn.active { color: #1a8cff; border-bottom-color: #1a8cff; background: #0a0a0a; }
 
@@ -29,35 +27,31 @@
     
     .swiper { width: 100%; height: 100%; background: #0a0a0a; border-radius: 8px; }
     .swiper-slide { display: flex; justify-content: center; align-items: center; }
-    .swiper-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-    /* Hide Swiper arrows on Mobile, keep them on PC */
+    .swiper-slide img { max-width: 70%; max-height: 70%; object-fit: contain; transition: max-width 0.3s ease, max-height 0.3s ease; }
+    
     @media (max-width: 768px) {
       .swiper-button-next, .swiper-button-prev { display: none !important; }
+      .swiper-slide img { max-width: 100%; max-height: 100%; }
     }
 
-    /* FULLSCREEN BUTTON FOR TUTORIAL */
     .fs-btn {
       position: absolute; top: 15px; right: 15px; z-index: 1000;
       background: rgba(0, 0, 0, 0.6); color: #ffffff; border: 1px solid #333;
-      padding: 8px 12px; border-radius: 6px; font-size: 1.2rem; cursor: pointer;
-      display: none; 
+      padding: 8px 12px; border-radius: 6px; font-size: 1.2rem; cursor: pointer; display: none; 
     }
     .fs-btn:hover { background: #1a8cff; border-color: #1a8cff; }
 
-    /* PDF DOWNLOAD BUTTON */
     .pdf-btn {
       position: absolute; top: 15px; left: 15px; z-index: 1000;
-      background: rgba(230, 0, 0, 0.9); color: #ffffff; border: 1px solid #cc0000;
-      padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; text-decoration: none;
-      display: none; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: background 0.2s, transform 0.2s;
+      background: rgba(26, 140, 255, 0.9); color: #ffffff; border: 1px solid #0073e6;
+      padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; text-decoration: none;
+      display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: background 0.2s, transform 0.2s;
     }
-    .pdf-btn:hover { background: #ff1a1a; transform: scale(1.05); }
+    .pdf-btn:hover { background: #0073e6; transform: scale(1.05); }
 
-    #tutorial:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
-    #tutorial:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+    /* Fix fullscreen logic across multiple containers */
+    .gallery-container:fullscreen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+    .gallery-container:-webkit-full-screen { background: #0a0a0a; padding: 0 !important; display: flex; align-items: center; justify-content: center; }
 
     .list-item { background: #111111; border: 1px solid #333333; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .list-item a { color: #1a8cff; text-decoration: none; font-weight: bold; }
@@ -70,10 +64,6 @@
     .buy-btn:hover { background: #0073e6; }
     .preview-btn { background: #333; color: white; border: 1px solid #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; font-weight: bold; }
     .preview-btn:hover { background: #444; }
-    
-    /* Section headers inside Equipment Tab */
-    .equip-header { color: #1a8cff; margin: 25px 0 15px 0; border-bottom: 1px solid #333; padding-bottom: 5px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
-    .equip-header:first-child { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -86,23 +76,49 @@
   </header>
 
   <div class="tabs-nav">
+    <!-- Non-Game Tab -->
     <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
+    
+    <!-- Game Tabs -->
+    <button class="tab-btn" id="tab-btn-organizer" style="display: none;" onclick="switchTab('organizer', this)">Organizer Guide</button>
+    <button class="tab-btn" id="tab-btn-apps-manual" style="display: none;" onclick="switchTab('apps-manual', this)">Apps Manual</button>
+    
     <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
     <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
     
-    <!-- NEW: Equipment Tab for Games -->
-    <button class="tab-btn" id="tab-btn-equipment" style="display: none;" onclick="switchTab('equipment', this)">Equipment</button>
-    
+    <!-- Dynamic Makecode -->
     <div id="makecode-tabs-wrapper" style="display: contents;"></div>
 
     <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
   </div>
 
-  <div id="tutorial" class="tab-content active" style="padding: 0; position: relative;">
-    <button id="fullscreen-btn" class="fs-btn">⛶</button>
-    
-    <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="swiper-wrapper"></div>
+  <!-- Tutorial Container (Non-Game) -->
+  <div id="tutorial" class="tab-content gallery-container active" style="padding: 0; position: relative;">
+    <button id="fs-btn-tutorial" class="fs-btn" onclick="toggleFS('tutorial', 'fs-btn-tutorial')">⛶</button>
+    <div class="swiper mySwiper" id="swiper-tutorial">
+      <div class="swiper-wrapper" id="wrapper-tutorial"></div>
+      <div class="swiper-button-next" style="color: #1a8cff;"></div>
+      <div class="swiper-button-prev" style="color: #1a8cff;"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+
+  <!-- Organizer Container (Game) -->
+  <div id="organizer" class="tab-content gallery-container" style="padding: 0; position: relative;">
+    <button id="fs-btn-organizer" class="fs-btn" onclick="toggleFS('organizer', 'fs-btn-organizer')">⛶</button>
+    <div class="swiper mySwiper" id="swiper-organizer">
+      <div class="swiper-wrapper" id="wrapper-organizer"></div>
+      <div class="swiper-button-next" style="color: #1a8cff;"></div>
+      <div class="swiper-button-prev" style="color: #1a8cff;"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+
+  <!-- Apps Manual Container (Game) -->
+  <div id="apps-manual" class="tab-content gallery-container" style="padding: 0; position: relative;">
+    <button id="fs-btn-apps-manual" class="fs-btn" onclick="toggleFS('apps-manual', 'fs-btn-apps-manual')">⛶</button>
+    <div class="swiper mySwiper" id="swiper-apps-manual">
+      <div class="swiper-wrapper" id="wrapper-apps-manual"></div>
       <div class="swiper-button-next" style="color: #1a8cff;"></div>
       <div class="swiper-button-prev" style="color: #1a8cff;"></div>
       <div class="swiper-pagination"></div>
@@ -111,15 +127,6 @@
 
   <div id="components" class="tab-content">Loading...</div>
   <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
-
-  <!-- NEW: Combined Equipment Content Container -->
-  <div id="equipment" class="tab-content">
-    <h3 class="equip-header">🛠️ Parts & Links</h3>
-    <div id="equipment-components">Loading...</div>
-    <h3 class="equip-header">🧊 3D Print Files (STL)</h3>
-    <div id="equipment-stl">Loading...</div>
-  </div>
-
   <div id="makecode-contents-wrapper" style="display: contents;"></div>
 
   <div id="app" class="tab-content app-panel">
@@ -134,38 +141,25 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // --- FULLSCREEN LOGIC ---
-    const fsBtn = document.getElementById('fullscreen-btn');
-    const tutorialContainer = document.getElementById('tutorial');
-
-    fsBtn.addEventListener('click', () => {
+    // --- FULLSCREEN LOGIC REBUILT FOR MULTIPLE CONTAINERS ---
+    function toggleFS(containerId, btnId) {
+      const container = document.getElementById(containerId);
+      const btn = document.getElementById(btnId);
       if (!document.fullscreenElement) {
-        if (tutorialContainer.requestFullscreen) {
-          tutorialContainer.requestFullscreen();
-        } else if (tutorialContainer.webkitRequestFullscreen) {
-          tutorialContainer.webkitRequestFullscreen();
-        } else if (tutorialContainer.msRequestFullscreen) {
-          tutorialContainer.msRequestFullscreen();
-        }
-        fsBtn.innerText = "✖";
+        if (container.requestFullscreen) container.requestFullscreen();
+        else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+        else if (container.msRequestFullscreen) container.msRequestFullscreen();
+        btn.innerText = "✖";
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-        fsBtn.innerText = "⛶";
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+        btn.innerText = "⛶";
       }
-    });
-
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) fsBtn.innerText = "⛶";
-    });
-    document.addEventListener('webkitfullscreenchange', () => {
-      if (!document.webkitFullscreenElement) fsBtn.innerText = "⛶";
-    });
+    }
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) resetFSButtons(); });
+    document.addEventListener('webkitfullscreenchange', () => { if (!document.webkitFullscreenElement) resetFSButtons(); });
+    function resetFSButtons() { document.querySelectorAll('.fs-btn').forEach(btn => btn.innerText = "⛶"); }
 
     // --- 3D STL PREVIEWER LOGIC ---
     window.previewSTL = function(containerId, fileUrl) {
@@ -177,17 +171,13 @@
       container.style.height = '300px'; container.style.marginTop = '10px'; container.style.border = '1px solid #333';
       container.innerHTML = "<div style='color: #1a8cff; margin-top: 130px; text-align: center; font-weight: bold;'>Downloading 3D Model from GitHub...</div>";
       setTimeout(() => {
-        const width = container.clientWidth;
-        const height = 300;
-        container.innerHTML = ""; 
+        const width = container.clientWidth; const height = 300; container.innerHTML = ""; 
         const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0a0a0a); 
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(width, height); container.appendChild(renderer.domElement);
         
         const controls = new THREE.OrbitControls(camera, renderer.domElement); 
-        controls.enableDamping = true;
-        controls.enableZoom = true; 
-        controls.enablePan = true;  
+        controls.enableDamping = true; controls.enableZoom = true; controls.enablePan = true;  
         
         scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5)); const light = new THREE.DirectionalLight(0xffffff, 0.5); light.position.set(1, 1, 1); scene.add(light);
         const loader = new THREE.STLLoader();
@@ -209,6 +199,30 @@
       btnElement.classList.add('active');
     }
 
+    // --- REUSABLE GALLERY BUILDER ---
+    function buildGallery(containerId, wrapperId, images, pdfUrl, emptyMessage, fsBtnId) {
+      const wrapper = document.getElementById(wrapperId);
+      const container = document.getElementById(containerId);
+      const fsBtn = document.getElementById(fsBtnId);
+
+      if (pdfUrl) {
+        const pdfBtn = document.createElement('a');
+        pdfBtn.href = pdfUrl; pdfBtn.target = "_blank"; pdfBtn.className = "pdf-btn";
+        pdfBtn.innerHTML = "📄 PDF"; pdfBtn.style.display = "block";
+        container.appendChild(pdfBtn);
+      }
+
+      if (images && images.length > 0) {
+        fsBtn.style.display = 'block';
+        images.forEach(img => {
+          wrapper.innerHTML += `<div class="swiper-slide"><div class="swiper-zoom-container"><img src="${img.url}" alt="${img.name}"></div></div>`;
+        });
+        new Swiper(`#swiper-${containerId}`, { zoom: true, navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, pagination: { el: ".swiper-pagination", clickable: true }, keyboard: { enabled: true } });
+      } else {
+        wrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">${emptyMessage}</div>`;
+      }
+    }
+
     window.onload = function() {
       const urlParams = new URLSearchParams(window.location.search);
       const projectId = urlParams.get('id');
@@ -222,76 +236,45 @@
       let displayTitle = project.title;
       
       if (displayTitle.toUpperCase().includes('[GAME]')) {
-        isGame = true; 
-        displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
+        isGame = true; displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
       }
-
       displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
       document.getElementById('project-title').innerText = displayTitle;
 
-      // 1. DYNAMIC TAB CONFIGURATION
       if (isGame) {
-        document.getElementById('tab-btn-tutorial').innerText = 'Tutorials';
-        
-        // Hide regular tabs
-        document.getElementById('tab-btn-components').style.display = 'none';
-        document.getElementById('tab-btn-stl').style.display = 'none';
+        // UI Toggles for Game Mode
+        document.getElementById('tab-btn-tutorial').style.display = 'none';
+        document.getElementById('tab-btn-organizer').style.display = 'block';
+        document.getElementById('tab-btn-apps-manual').style.display = 'block';
         document.getElementById('makecode-tabs-wrapper').style.display = 'none';
         
-        // Show Equipment & Game Management tabs
-        document.getElementById('tab-btn-equipment').style.display = 'inline-block';
-        document.getElementById('tab-btn-app').style.display = 'inline-block';
-        document.getElementById('tab-btn-app').innerText = 'Game Management';
-        
+        // Force Organizer Guide as the active tab on load
+        document.getElementById('tutorial').classList.remove('active');
+        document.getElementById('tab-btn-tutorial').classList.remove('active');
+        document.getElementById('organizer').classList.add('active');
+        document.getElementById('tab-btn-organizer').classList.add('active');
+
+        document.getElementById('tab-btn-app').innerText = 'Apps';
         document.getElementById('app-heading').innerText = 'Game Management System';
         document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
-      }
 
-      // 2. TUTORIAL SLIDES & PDF BUTTON
-      const swiperWrapper = document.getElementById('swiper-wrapper');
-      
-      // FIXED: PDF Button now displays for Games too if a PDF is found!
-      if (project.tutorialPdf) {
-        const pdfBtn = document.createElement('a');
-        pdfBtn.href = project.tutorialPdf;
-        pdfBtn.target = "_blank";
-        pdfBtn.className = "pdf-btn";
-        pdfBtn.innerHTML = "📄 Download PDF";
-        pdfBtn.style.display = "block";
-        document.getElementById('tutorial').appendChild(pdfBtn);
-      }
+        // Build Game Galleries
+        buildGallery('organizer', 'wrapper-organizer', project.organizerImages, project.organizerPdf, 'No Organizer Guide files found.', 'fs-btn-organizer');
+        buildGallery('apps-manual', 'wrapper-apps-manual', project.appsManualImages, project.appsManualPdf, 'No Apps Manual files found.', 'fs-btn-apps-manual');
 
-      if (project.tutorialImages && project.tutorialImages.length > 0) {
-        fsBtn.style.display = 'block'; 
-        project.tutorialImages.forEach(img => { 
-          swiperWrapper.innerHTML += `
-            <div class="swiper-slide">
-              <div class="swiper-zoom-container">
-                <img src="${img.url}" alt="${img.name}">
-              </div>
-            </div>`; 
-        });
-        
-        new Swiper(".mySwiper", { 
-          zoom: true, 
-          navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, 
-          pagination: { el: ".swiper-pagination", clickable: true }, 
-          keyboard: { enabled: true } 
-        });
       } else {
-        swiperWrapper.innerHTML = `<div style="color: #9ca3af; text-align: center; width:100%; margin-top:20px;">No ${isGame ? 'manual pages' : 'tutorial slides'} found.</div>`;
+        // Build Standard Tutorial Gallery
+        buildGallery('tutorial', 'wrapper-tutorial', project.tutorialImages, project.tutorialPdf, 'No tutorial slides found.', 'fs-btn-tutorial');
       }
 
-      // 3. COMPONENTS (Route to Equipment tab if Game, else Components tab)
-      const compContainer = document.getElementById(isGame ? 'equipment-components' : 'components');
+      // 3. COMPONENTS
+      const compContainer = document.getElementById('components');
       if (project.components && project.components.trim() !== "") {
         const lines = project.components.split('\n');
         let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
         lines.forEach(line => {
-          // Ignore raw metadata lines injected for index.html parsing
-          if (!line.trim() || line.toLowerCase().includes('buy link:') || line.toLowerCase().includes('stl link:')) return;
-          
+          if (!line.trim()) return;
           const parts = line.split('|');
           if (parts.length >= 2) {
             const name = parts[0].trim(), link = parts[1].trim(), price = parts.length >= 3 ? parts[2].trim() : "";
@@ -301,8 +284,8 @@
         compContainer.innerHTML = html + '</div>';
       } else { compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>'; }
 
-      // 4. STL FILES (Route to Equipment tab if Game, else STL tab)
-      const stlList = document.getElementById(isGame ? 'equipment-stl' : 'stl-list');
+      // 4. STL FILES
+      const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
@@ -314,7 +297,7 @@
                 <span style="font-weight: bold;">${file.name}</span>
                 <div style="display: flex; gap: 10px;">
                   <button onclick="previewSTL('${containerId}', '${githubPreviewUrl}')" class="preview-btn">👁️ PREVIEW</button>
-                  <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️ STL</a>
+                  <a href="${file.url}" class="buy-btn" style="text-align: center;">⬇️️ STL</a>
                 </div>
               </div>
               <div id="${containerId}" style="width: 100%; height: 0px; overflow: hidden; transition: height 0.3s; background: #0a0a0a; border-radius: 6px; margin-top: 0px;"></div>
@@ -322,20 +305,16 @@
         });
       } else { stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>'; }
 
-      // 5. DYNAMIC MAKECODE TABS
+      // 5. DYNAMIC MAKECODE TABS (Hidden for Games, but generated anyway)
       const mkTabsWrapper = document.getElementById('makecode-tabs-wrapper');
       const mkContentsWrapper = document.getElementById('makecode-contents-wrapper');
-      
       let makecodeData = project.makecodeLinks;
 
-      if (typeof makecodeData === 'string') {
-        makecodeData = makecodeData.trim() !== '' ? [{ name: 'MakeCode', url: makecodeData }] : [];
-      }
+      if (typeof makecodeData === 'string') { makecodeData = makecodeData.trim() !== '' ? [{ name: 'MakeCode', url: makecodeData }] : []; }
 
       if (makecodeData && makecodeData.length > 0) {
         makecodeData.forEach((mk, index) => {
           const lowerName = mk.name.toLowerCase();
-          
           let tabTitle = 'MakeCode';
           if (lowerName.includes('robot')) tabTitle = 'MakeCode Robot';
           else if (lowerName.includes('remote')) tabTitle = 'MakeCode Remote';
@@ -344,16 +323,12 @@
           const tabId = `makecode-dynamic-${index}`;
 
           const btn = document.createElement('button');
-          btn.className = 'tab-btn';
-          btn.id = `tab-btn-${tabId}`;
-          btn.innerText = tabTitle;
+          btn.className = 'tab-btn'; btn.id = `tab-btn-${tabId}`; btn.innerText = tabTitle;
           btn.onclick = function() { switchTab(tabId, this); };
           mkTabsWrapper.appendChild(btn);
 
           const content = document.createElement('div');
-          content.id = tabId;
-          content.className = 'tab-content';
-          content.style.padding = '0';
+          content.id = tabId; content.className = 'tab-content'; content.style.padding = '0';
           
           const urlMatch = mk.url.match(/https?:\/\/[^\s]+/);
           if (urlMatch) {
@@ -366,27 +341,19 @@
                   <a href="${urlMatch[0]}" target="_blank" class="app-launch-btn" style="background: #1a8cff;">OPEN REPOSITORY ➔</a>
                 </div>`;
             }
-          } else {
-            content.innerHTML = `<div style="padding: 20px;">${mk.url}</div>`;
-          }
+          } else { content.innerHTML = `<div style="padding: 20px;">${mk.url}</div>`; }
           mkContentsWrapper.appendChild(content);
         });
       } else {
-        // Only generate the empty MakeCode tab if it's NOT a game
-        if (!isGame) {
-          const btn = document.createElement('button');
-          btn.className = 'tab-btn';
-          btn.id = 'tab-btn-makecode-empty';
-          btn.innerText = 'MakeCode';
-          btn.onclick = function() { switchTab('makecode-empty', this); };
-          mkTabsWrapper.appendChild(btn);
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn'; btn.id = 'tab-btn-makecode-empty'; btn.innerText = 'MakeCode';
+        btn.onclick = function() { switchTab('makecode-empty', this); };
+        mkTabsWrapper.appendChild(btn);
 
-          const content = document.createElement('div');
-          content.id = 'makecode-empty';
-          content.className = 'tab-content';
-          content.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
-          mkContentsWrapper.appendChild(content);
-        }
+        const content = document.createElement('div');
+        content.id = 'makecode-empty'; content.className = 'tab-content';
+        content.innerHTML = '<div style="color: #9ca3af; padding: 20px;">No Makecode link provided.</div>';
+        mkContentsWrapper.appendChild(content);
       }
 
       // 6. APP LINK
