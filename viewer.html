@@ -26,13 +26,22 @@
     .tab-content.active { display: block; }
     
     .swiper { width: 100%; height: 100%; background: #0a0a0a; border-radius: 8px; }
-    .swiper-slide { display: flex; justify-content: center; align-items: center; }
+    .swiper-slide { display: flex; justify-content: center; align-items: center; position: relative; }
     .swiper-slide img { max-width: 70%; max-height: 70%; object-fit: contain; transition: max-width 0.3s ease, max-height 0.3s ease; }
     
     @media (max-width: 768px) {
       .swiper-button-next, .swiper-button-prev { display: none !important; }
       .swiper-slide img { max-width: 100%; max-height: 100%; }
     }
+
+    /* 🌟 NEW PLAY VIDEO BUTTON */
+    .play-video-btn {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: #e60000; color: white; padding: 10px 20px; border-radius: 30px;
+      font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 15px rgba(230, 0, 0, 0.5); z-index: 1000; transition: transform 0.2s, background 0.2s;
+    }
+    .play-video-btn:hover { background: #ff1a1a; transform: translateX(-50%) scale(1.05); }
 
     .fs-btn {
       position: absolute; top: 15px; right: 15px; z-index: 1000;
@@ -75,23 +84,15 @@
   </header>
 
   <div class="tabs-nav">
-    <!-- Non-Game Tab -->
     <button class="tab-btn active" id="tab-btn-tutorial" onclick="switchTab('tutorial', this)">Tutorial</button>
-    
-    <!-- Game Tabs -->
     <button class="tab-btn" id="tab-btn-game-manual" style="display: none;" onclick="switchTab('game-manual', this)">Game Manual</button>
     <button class="tab-btn" id="tab-btn-apps-manual" style="display: none;" onclick="switchTab('apps-manual', this)">Apps Manual</button>
-    
     <button class="tab-btn" id="tab-btn-components" onclick="switchTab('components', this)">Components</button>
     <button class="tab-btn" id="tab-btn-stl" onclick="switchTab('stl', this)">STL Files</button>
-    
-    <!-- Dynamic Makecode -->
     <div id="makecode-tabs-wrapper" style="display: contents;"></div>
-
     <button class="tab-btn" id="tab-btn-app" style="display: none;" onclick="switchTab('app', this)">APP</button>
   </div>
 
-  <!-- Tutorial Container (Non-Game) -->
   <div id="tutorial" class="tab-content gallery-container active" style="padding: 0; position: relative;">
     <button id="fs-btn-tutorial" class="fs-btn" onclick="toggleFS('tutorial', 'fs-btn-tutorial')">⛶</button>
     <div class="swiper mySwiper" id="swiper-tutorial">
@@ -102,7 +103,6 @@
     </div>
   </div>
 
-  <!-- Game Manual Container (Game) -->
   <div id="game-manual" class="tab-content gallery-container" style="padding: 0; position: relative;">
     <button id="fs-btn-game-manual" class="fs-btn" onclick="toggleFS('game-manual', 'fs-btn-game-manual')">⛶</button>
     <div class="swiper mySwiper" id="swiper-game-manual">
@@ -113,7 +113,6 @@
     </div>
   </div>
 
-  <!-- Apps Manual Container (Game) -->
   <div id="apps-manual" class="tab-content gallery-container" style="padding: 0; position: relative;">
     <button id="fs-btn-apps-manual" class="fs-btn" onclick="toggleFS('apps-manual', 'fs-btn-apps-manual')">⛶</button>
     <div class="swiper mySwiper" id="swiper-apps-manual">
@@ -140,7 +139,6 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    // --- FULLSCREEN LOGIC ---
     function toggleFS(containerId, btnId) {
       const container = document.getElementById(containerId);
       const btn = document.getElementById(btnId);
@@ -160,7 +158,6 @@
     document.addEventListener('webkitfullscreenchange', () => { if (!document.webkitFullscreenElement) resetFSButtons(); });
     function resetFSButtons() { document.querySelectorAll('.fs-btn').forEach(btn => btn.innerText = "⛶"); }
 
-    // --- 3D STL PREVIEWER LOGIC ---
     window.previewSTL = function(containerId, fileUrl) {
       const container = document.getElementById(containerId);
       if (container.style.height === '300px') {
@@ -198,7 +195,7 @@
       btnElement.classList.add('active');
     }
 
-    // --- REUSABLE GALLERY BUILDER ---
+    // 🌟 UPDATED: Gallery Builder now injects Play Video button if attached!
     function buildGallery(containerId, wrapperId, images, pdfUrl, emptyMessage, fsBtnId) {
       const wrapper = document.getElementById(wrapperId);
       const container = document.getElementById(containerId);
@@ -214,7 +211,17 @@
       if (images && images.length > 0) {
         fsBtn.style.display = 'block';
         images.forEach(img => {
-          wrapper.innerHTML += `<div class="swiper-slide"><div class="swiper-zoom-container"><img src="${img.url}" alt="${img.name}"></div></div>`;
+          let videoHtml = '';
+          if (img.videoUrl) {
+            videoHtml = `<a href="${img.videoUrl}" target="_blank" class="play-video-btn">▶ Play Video</a>`;
+          }
+          wrapper.innerHTML += `
+            <div class="swiper-slide">
+              <div class="swiper-zoom-container">
+                <img src="${img.url}" alt="${img.name}">
+              </div>
+              ${videoHtml}
+            </div>`;
         });
         new Swiper(`#swiper-${containerId}`, { zoom: true, navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, pagination: { el: ".swiper-pagination", clickable: true }, keyboard: { enabled: true } });
       } else {
@@ -235,19 +242,17 @@
       let displayTitle = project.title;
       
       if (displayTitle.toUpperCase().includes('[GAME]')) {
-        isGame = true; displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
+        isGame = true; displayTitle = displayTitle.replace(/[GAME]/i, '').trim(); 
       }
       displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
       document.getElementById('project-title').innerText = displayTitle;
 
       if (isGame) {
-        // UI Toggles for Game Mode
         document.getElementById('tab-btn-tutorial').style.display = 'none';
         document.getElementById('tab-btn-game-manual').style.display = 'block';
         document.getElementById('tab-btn-apps-manual').style.display = 'block';
         document.getElementById('makecode-tabs-wrapper').style.display = 'none';
         
-        // Force Game Manual as the active tab on load
         document.getElementById('tutorial').classList.remove('active');
         document.getElementById('tab-btn-tutorial').classList.remove('active');
         document.getElementById('game-manual').classList.add('active');
@@ -258,16 +263,13 @@
         document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
         document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
 
-        // Build Game Galleries
         buildGallery('game-manual', 'wrapper-game-manual', project.gameManualImages, project.gameManualPdf, 'No Game Manual files found.', 'fs-btn-game-manual');
         buildGallery('apps-manual', 'wrapper-apps-manual', project.appsManualImages, project.appsManualPdf, 'No Apps Manual files found.', 'fs-btn-apps-manual');
 
       } else {
-        // Build Standard Tutorial Gallery
         buildGallery('tutorial', 'wrapper-tutorial', project.tutorialImages, project.tutorialPdf, 'No tutorial slides found.', 'fs-btn-tutorial');
       }
 
-      // 3. COMPONENTS
       const compContainer = document.getElementById('components');
       if (project.components && project.components.trim() !== "") {
         const lines = project.components.split('\n');
@@ -283,7 +285,6 @@
         compContainer.innerHTML = html + '</div>';
       } else { compContainer.innerHTML = '<div style="color: #9ca3af;">No components list found.</div>'; }
 
-      // 4. STL FILES
       const stlList = document.getElementById('stl-list');
       if (project.stlFiles && project.stlFiles.length > 0) {
         stlList.innerHTML = '';
@@ -304,7 +305,6 @@
         });
       } else { stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>'; }
 
-      // 5. DYNAMIC MAKECODE TABS
       const mkTabsWrapper = document.getElementById('makecode-tabs-wrapper');
       const mkContentsWrapper = document.getElementById('makecode-contents-wrapper');
       let makecodeData = project.makecodeLinks;
@@ -355,7 +355,6 @@
         mkContentsWrapper.appendChild(content);
       }
 
-      // 6. APP LINK
       if (project.appLink && project.appLink.includes("http")) {
         document.getElementById('tab-btn-app').style.display = 'inline-block';
         document.getElementById('app-link-anchor').href = project.appLink;
