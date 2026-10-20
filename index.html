@@ -25,7 +25,6 @@
     .hero-container { text-align: center; margin-bottom: 2.5rem; width: 100%; max-width: 500px; }
     .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
 
-    /* FETCH BUTTON (BOTTOM RIGHT) */
     .btn-refresh {
       position: fixed; bottom: 30px; right: 30px; z-index: 1000;
       background: #1a1a1a; border: 2px solid #1a8cff; color: #1a8cff;
@@ -36,7 +35,6 @@
     .btn-refresh:hover { background: #1a8cff; color: #ffffff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(26, 140, 255, 0.4); }
     .btn-refresh:disabled { background: #333; color: #777; border-color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    /* 🌟 APP LAUNCHER BUTTON (BOTTOM LEFT) */
     .btn-apps-menu {
       position: fixed; bottom: 30px; left: 30px; z-index: 1000;
       background: #111111; border: 2px solid #e60000; color: #e60000;
@@ -46,7 +44,6 @@
     }
     .btn-apps-menu:hover { background: #e60000; color: #ffffff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(230, 0, 0, 0.4); }
 
-    /* 🌟 APP LAUNCHER MODAL */
     .apps-modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;
@@ -133,7 +130,6 @@
     .footer-makerspace-logo { height: 30px; width: auto; border-radius: 4px; }
     .footer-brand { color: #f3f4f6; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
 
-    /* Webkit Scrollbar Styling for Apps List */
     .apps-list::-webkit-scrollbar { width: 6px; }
     .apps-list::-webkit-scrollbar-track { background: #111; border-radius: 4px; }
     .apps-list::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -171,7 +167,8 @@
     </div>
 
     <div class="section-container" id="game-section" style="display: none;">
-      <h2 class="section-title">🎮 GAME ARENA</h2>
+      <!-- 🌟 UPDATED SECTION TITLE -->
+      <h2 class="section-title">🎮 GAME MANAGEMENT HUB</h2>
       <div class="catalog-grid" id="game-grid"></div>
     </div>
   </main>
@@ -184,7 +181,6 @@
     </div>
   </footer>
 
-  <!-- 🌟 FLOATING BUTTONS -->
   <button id="appsMenuBtn" class="btn-apps-menu" onclick="toggleAppsMenu()">
     <span>📱</span> App Launcher
   </button>
@@ -193,7 +189,6 @@
     <span>🔄</span> Fetch Modules
   </button>
 
-  <!-- 🌟 APPS MODAL -->
   <div id="appsModal" class="apps-modal">
     <div class="apps-modal-content">
       <div class="apps-modal-header">
@@ -201,7 +196,6 @@
         <button onclick="toggleAppsMenu()" class="close-modal-btn">✖</button>
       </div>
       <div id="apps-list" class="apps-list">
-        <!-- Apps dynamically injected here -->
       </div>
     </div>
   </div>
@@ -209,7 +203,6 @@
   <script>
     const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
-    // 🌟 APP MENU LOGIC
     function toggleAppsMenu() {
       const modal = document.getElementById('appsModal');
       if (modal.style.display === 'flex') {
@@ -232,8 +225,16 @@
         projects.forEach(p => {
           if (p.appLink && p.appLink.includes('http')) {
             hasApps = true;
-            // Clean up the title exactly like the cards do
-            let displayTitle = p.title.replace(/\[.*?\]/g, '').replace(/^\d+[\s\-\.\_]*/, '').trim();
+            let displayTitle = p.title;
+            
+            // 🌟 BULLETPROOF REMOVAL FOR APP MENU
+            const upperTitle = displayTitle.toUpperCase();
+            if (upperTitle.includes('[GAME]')) {
+              const startIdx = upperTitle.indexOf('[GAME]');
+              displayTitle = displayTitle.substring(0, startIdx) + displayTitle.substring(startIdx + 6);
+            }
+            displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
+
             list.innerHTML += `<a href="${p.appLink}" target="_blank" class="app-shortcut-item"><span>🚀</span> ${displayTitle}</a>`;
           }
         });
@@ -246,7 +247,6 @@
       }
     }
 
-    // Close modal when clicking outside
     window.onclick = function(event) {
       const modal = document.getElementById('appsModal');
       if (event.target === modal) {
@@ -254,7 +254,6 @@
       }
     }
 
-    // 🌟 CATALOG LOGIC
     async function fetchCatalog(forceRefresh = false) {
       const buildGrid = document.getElementById('build-grid');
       const gameGrid = document.getElementById('game-grid');
@@ -296,10 +295,13 @@
           let isGame = false;
           let displayTitle = project.title;
           
-          if (displayTitle.toUpperCase().includes('[GAME]')) {
-            isGame = true; displayTitle = displayTitle.replace(/[GAME]/i, '').trim(); 
+          // 🌟 BULLETPROOF REMOVAL FOR PROJECT CARDS
+          const upperTitle = displayTitle.toUpperCase();
+          if (upperTitle.includes('[GAME]')) {
+            isGame = true; 
+            const startIdx = upperTitle.indexOf('[GAME]');
+            displayTitle = displayTitle.substring(0, startIdx) + displayTitle.substring(startIdx + 6);
           }
-          
           displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
           let dateHtml = '';
