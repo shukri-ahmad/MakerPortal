@@ -34,7 +34,6 @@
       .swiper-slide img { max-width: 100%; max-height: 100%; }
     }
 
-    /* 🌟 NEW PLAY VIDEO BUTTON */
     .play-video-btn {
       position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
       background: #e60000; color: white; padding: 10px 20px; border-radius: 30px;
@@ -195,7 +194,6 @@
       btnElement.classList.add('active');
     }
 
-    // 🌟 UPDATED: Gallery Builder now injects Play Video button if attached!
     function buildGallery(containerId, wrapperId, images, pdfUrl, emptyMessage, fsBtnId) {
       const wrapper = document.getElementById(wrapperId);
       const container = document.getElementById(containerId);
@@ -241,10 +239,15 @@
       let isGame = false;
       let displayTitle = project.title;
       
-      if (displayTitle.toUpperCase().includes('[GAME]')) {
-        isGame = true; displayTitle = displayTitle.replace(/[GAME]/i, '').trim(); 
+      // 🌟 BULLETPROOF REMOVAL FOR VIEWER TITLE
+      const upperTitle = displayTitle.toUpperCase();
+      if (upperTitle.includes('[GAME]')) {
+        isGame = true; 
+        const startIdx = upperTitle.indexOf('[GAME]');
+        displayTitle = displayTitle.substring(0, startIdx) + displayTitle.substring(startIdx + 6);
       }
       displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
+      
       document.getElementById('project-title').innerText = displayTitle;
 
       if (isGame) {
