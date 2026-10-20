@@ -59,6 +59,13 @@
     .close-modal-btn:hover { color: #e60000; }
     
     .apps-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; padding-right: 5px; }
+    
+    /* 🌟 NEW: Sub-headers for the app menu */
+    .apps-section-title {
+      color: #9ca3af; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+      margin: 10px 0 5px 0; border-bottom: 1px solid #333; padding-bottom: 5px;
+    }
+
     .app-shortcut-item {
       background: #1a1a1a; border: 1px solid #333; color: #f3f4f6; padding: 15px;
       border-radius: 8px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 12px;
@@ -167,7 +174,6 @@
     </div>
 
     <div class="section-container" id="game-section" style="display: none;">
-      <!-- 🌟 UPDATED SECTION TITLE -->
       <h2 class="section-title">🎮 GAME MANAGEMENT HUB</h2>
       <div class="catalog-grid" id="game-grid"></div>
     </div>
@@ -213,6 +219,7 @@
       }
     }
 
+    // 🌟 UPDATED: Separates the Apps into two neat sections
     function populateAppsList() {
       const list = document.getElementById('apps-list');
       list.innerHTML = '';
@@ -220,27 +227,43 @@
       
       if (cachedData) {
         const projects = JSON.parse(cachedData);
-        let hasApps = false;
+        let appControlHtml = '';
+        let gameManagerHtml = '';
         
         projects.forEach(p => {
           if (p.appLink && p.appLink.includes('http')) {
-            hasApps = true;
             let displayTitle = p.title;
+            let isGame = false;
             
-            // 🌟 BULLETPROOF REMOVAL FOR APP MENU
             const upperTitle = displayTitle.toUpperCase();
             if (upperTitle.includes('[GAME]')) {
+              isGame = true;
               const startIdx = upperTitle.indexOf('[GAME]');
               displayTitle = displayTitle.substring(0, startIdx) + displayTitle.substring(startIdx + 6);
             }
             displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
-            list.innerHTML += `<a href="${p.appLink}" target="_blank" class="app-shortcut-item"><span>🚀</span> ${displayTitle}</a>`;
+            const shortcutHtml = `<a href="${p.appLink}" target="_blank" class="app-shortcut-item"><span>🚀</span> ${displayTitle}</a>`;
+
+            if (isGame) {
+              gameManagerHtml += shortcutHtml;
+            } else {
+              appControlHtml += shortcutHtml;
+            }
           }
         });
         
-        if (!hasApps) {
+        if (!appControlHtml && !gameManagerHtml) {
           list.innerHTML = '<div style="color: #9ca3af; text-align: center; padding: 20px;">No web apps found in the modules yet.</div>';
+        } else {
+          // Inject APP Control section if items exist
+          if (appControlHtml) {
+            list.innerHTML += `<div class="apps-section-title">🛠️ APP Control</div>${appControlHtml}`;
+          }
+          // Inject Game Manager section if items exist
+          if (gameManagerHtml) {
+            list.innerHTML += `<div class="apps-section-title" style="margin-top: 15px;">🎮 Game Manager</div>${gameManagerHtml}`;
+          }
         }
       } else {
         list.innerHTML = '<div style="color: #9ca3af; text-align: center; padding: 20px;">Please fetch modules first.</div>';
@@ -295,7 +318,6 @@
           let isGame = false;
           let displayTitle = project.title;
           
-          // 🌟 BULLETPROOF REMOVAL FOR PROJECT CARDS
           const upperTitle = displayTitle.toUpperCase();
           if (upperTitle.includes('[GAME]')) {
             isGame = true; 
