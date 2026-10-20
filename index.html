@@ -25,6 +25,7 @@
     .hero-container { text-align: center; margin-bottom: 2.5rem; width: 100%; max-width: 500px; }
     .hero-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
 
+    /* FETCH BUTTON (BOTTOM RIGHT) */
     .btn-refresh {
       position: fixed; bottom: 30px; right: 30px; z-index: 1000;
       background: #1a1a1a; border: 2px solid #1a8cff; color: #1a8cff;
@@ -34,6 +35,40 @@
     }
     .btn-refresh:hover { background: #1a8cff; color: #ffffff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(26, 140, 255, 0.4); }
     .btn-refresh:disabled { background: #333; color: #777; border-color: #555; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* 🌟 APP LAUNCHER BUTTON (BOTTOM LEFT) */
+    .btn-apps-menu {
+      position: fixed; bottom: 30px; left: 30px; z-index: 1000;
+      background: #111111; border: 2px solid #e60000; color: #e60000;
+      padding: 12px 24px; border-radius: 30px; cursor: pointer;
+      font-size: 0.95rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+      transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;
+    }
+    .btn-apps-menu:hover { background: #e60000; color: #ffffff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(230, 0, 0, 0.4); }
+
+    /* 🌟 APP LAUNCHER MODAL */
+    .apps-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;
+      backdrop-filter: blur(5px);
+    }
+    .apps-modal-content {
+      background: #111111; border: 1px solid #333333; border-radius: 12px; width: 90%; max-width: 400px;
+      padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column;
+    }
+    .apps-modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 15px; }
+    .apps-modal-header h3 { margin: 0; color: #f3f4f6; display: flex; align-items: center; gap: 10px; font-size: 1.2rem; }
+    .close-modal-btn { background: none; border: none; color: #9ca3af; font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
+    .close-modal-btn:hover { color: #e60000; }
+    
+    .apps-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; padding-right: 5px; }
+    .app-shortcut-item {
+      background: #1a1a1a; border: 1px solid #333; color: #f3f4f6; padding: 15px;
+      border-radius: 8px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 12px;
+      transition: all 0.2s;
+    }
+    .app-shortcut-item span { font-size: 1.2rem; }
+    .app-shortcut-item:hover { background: #e60000; color: #fff; border-color: #e60000; transform: translateX(5px); }
 
     #loader { text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; width: 100%; }
     .portal-animation { position: relative; width: 80px; height: 80px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
@@ -60,13 +95,11 @@
       background: #111111; border: 1px solid #333333; border-radius: 10px;
       overflow: hidden; text-decoration: none; color: white;
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; 
-      display: flex; flex-direction: column; 
-      position: relative; /* 🌟 Added relative for the badge absolute positioning */
+      display: flex; flex-direction: column; position: relative; 
     }
     .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #1a8cff; }
     .card-image { width: 100%; height: 140px; object-fit: cover; background: #0a0a0a; border-bottom: 1px solid #333333; }
     
-    /* 🌟 NEW BADGE & DATE TEXT STYLES */
     .badge-update {
       position: absolute; top: 8px; right: 8px; background: #00cc44; color: #ffffff;
       padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;
@@ -81,7 +114,7 @@
     }
     
     .card-content h3 { 
-      margin: 0 0 5px 0; /* Reduced margin to fit date underneath */
+      margin: 0 0 5px 0; 
       font-size: 1.05rem; color: #f9fafb; 
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; 
       overflow: hidden; white-space: normal; line-height: 1.4; text-align: center; 
@@ -100,9 +133,17 @@
     .footer-makerspace-logo { height: 30px; width: auto; border-radius: 4px; }
     .footer-brand { color: #f3f4f6; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
 
+    /* Webkit Scrollbar Styling for Apps List */
+    .apps-list::-webkit-scrollbar { width: 6px; }
+    .apps-list::-webkit-scrollbar-track { background: #111; border-radius: 4px; }
+    .apps-list::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    .apps-list::-webkit-scrollbar-thumb:hover { background: #e60000; }
+
     @media (max-width: 480px) {
       .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
       .card-image { height: 120px; }
+      .btn-apps-menu { bottom: 85px; left: 50%; transform: translateX(-50%); border-radius: 30px; } 
+      .btn-refresh { bottom: 30px; left: 50%; right: auto; transform: translateX(-50%); }
     }
   </style>
 </head>
@@ -143,13 +184,77 @@
     </div>
   </footer>
 
-  <button id="refreshBtn" class="btn-refresh" onclick="fetchCatalog(true)">
-    <span>🔄</span> Fetch New Modules
+  <!-- 🌟 FLOATING BUTTONS -->
+  <button id="appsMenuBtn" class="btn-apps-menu" onclick="toggleAppsMenu()">
+    <span>📱</span> App Launcher
   </button>
+
+  <button id="refreshBtn" class="btn-refresh" onclick="fetchCatalog(true)">
+    <span>🔄</span> Fetch Modules
+  </button>
+
+  <!-- 🌟 APPS MODAL -->
+  <div id="appsModal" class="apps-modal">
+    <div class="apps-modal-content">
+      <div class="apps-modal-header">
+        <h3>📱 App Launcher</h3>
+        <button onclick="toggleAppsMenu()" class="close-modal-btn">✖</button>
+      </div>
+      <div id="apps-list" class="apps-list">
+        <!-- Apps dynamically injected here -->
+      </div>
+    </div>
+  </div>
 
   <script>
     const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyHIpqSz3wZT984jtw-TwQaxZJMwJwIdmAQg9Jz3_0IkdjTBRYjbtxnHWCK84K_MIxUTQ/exec";
 
+    // 🌟 APP MENU LOGIC
+    function toggleAppsMenu() {
+      const modal = document.getElementById('appsModal');
+      if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+      } else {
+        populateAppsList();
+        modal.style.display = 'flex';
+      }
+    }
+
+    function populateAppsList() {
+      const list = document.getElementById('apps-list');
+      list.innerHTML = '';
+      const cachedData = localStorage.getItem('makerspace_projects');
+      
+      if (cachedData) {
+        const projects = JSON.parse(cachedData);
+        let hasApps = false;
+        
+        projects.forEach(p => {
+          if (p.appLink && p.appLink.includes('http')) {
+            hasApps = true;
+            // Clean up the title exactly like the cards do
+            let displayTitle = p.title.replace(/\[.*?\]/g, '').replace(/^\d+[\s\-\.\_]*/, '').trim();
+            list.innerHTML += `<a href="${p.appLink}" target="_blank" class="app-shortcut-item"><span>🚀</span> ${displayTitle}</a>`;
+          }
+        });
+        
+        if (!hasApps) {
+          list.innerHTML = '<div style="color: #9ca3af; text-align: center; padding: 20px;">No web apps found in the modules yet.</div>';
+        }
+      } else {
+        list.innerHTML = '<div style="color: #9ca3af; text-align: center; padding: 20px;">Please fetch modules first.</div>';
+      }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('appsModal');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    // 🌟 CATALOG LOGIC
     async function fetchCatalog(forceRefresh = false) {
       const buildGrid = document.getElementById('build-grid');
       const gameGrid = document.getElementById('game-grid');
@@ -175,7 +280,7 @@
         localStorage.setItem('makerspace_projects', JSON.stringify(projects));
         
         loader.style.display = 'none';
-        refreshBtn.disabled = false; refreshBtn.innerHTML = '<span>🔄</span> Fetch New Modules';
+        refreshBtn.disabled = false; refreshBtn.innerHTML = '<span>🔄</span> Fetch Modules';
 
         if (!projects || projects.length === 0) {
           buildGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #9ca3af;">No projects found in the Drive folder.</p>';
@@ -192,12 +297,11 @@
           let displayTitle = project.title;
           
           if (displayTitle.toUpperCase().includes('[GAME]')) {
-            isGame = true; displayTitle = displayTitle.replace(/\[GAME\]/i, '').trim(); 
+            isGame = true; displayTitle = displayTitle.replace(/[GAME]/i, '').trim(); 
           }
           
           displayTitle = displayTitle.replace(/^\d+[\s\-\.\_]*/, '').trim();
 
-          // 🌟 NEW: Calculate Date and Highlight Logic
           let dateHtml = '';
           let badgeHtml = '';
           
@@ -208,18 +312,14 @@
             
             dateHtml = `<div class="update-text">Updated: ${dateString}</div>`;
             
-            // Check if updated in the last 14 days
             const now = new Date();
             const diffDays = Math.ceil(Math.abs(now - updatedDate) / (1000 * 60 * 60 * 24));
-            if (diffDays <= 14) {
-              badgeHtml = `<div class="badge-update">NEWLY UPDATED</div>`;
-            }
+            if (diffDays <= 14) badgeHtml = `<div class="badge-update">NEWLY UPDATED</div>`;
           }
 
           const card = document.createElement('a');
           card.href = `viewer.html?id=${index}`; card.target = '_blank'; card.className = 'project-card';
           
-          // 🌟 Insert Date HTML and Badge HTML into Card
           card.innerHTML = `
             ${badgeHtml}
             <img src="${displayCover}" alt="${displayTitle}" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300/111111/1a8cff?text=No+Preview';">
