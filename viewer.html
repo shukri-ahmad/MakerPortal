@@ -64,7 +64,7 @@
     .list-item a { color: #1a8cff; text-decoration: none; font-weight: bold; }
     iframe { width: 100%; height: 100%; border: none; border-radius: 8px; background: white; }
 
-    .app-launch-btn { display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); margin-top: 20px; transition: transform 0.2s; }
+    .app-launch-btn { display: inline-block; background: #e60000; color: white; padding: 15px 30px; font-size: 1.1rem; font-weight: bold; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4); transition: transform 0.2s; text-align: center; }
     .app-launch-btn:hover { transform: scale(1.05); }
     .app-panel { text-align: center; padding: 40px 20px; }
     .buy-btn { background: #1a8cff; color: white !important; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; }
@@ -126,10 +126,12 @@
   <div id="stl" class="tab-content"><div id="stl-list">Loading...</div></div>
   <div id="makecode-contents-wrapper" style="display: contents;"></div>
 
+  <!-- 🌟 UPDATED APP PANEL -->
   <div id="app" class="tab-content app-panel">
     <h2 id="app-heading" style="color: #f3f4f6; margin-bottom: 10px;">Ready to Drive?</h2>
     <p id="app-desc" style="color: #9ca3af; margin-bottom: 20px;">Launch the Web Bluetooth controller to take command of your robot.</p>
-    <a id="app-link-anchor" href="#" target="_blank" class="app-launch-btn">LAUNCH CONTROL APP ➔</a>
+    <!-- Container to stack multiple buttons -->
+    <div id="app-links-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px;"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
@@ -260,11 +262,6 @@
         document.getElementById('game-manual').classList.add('active');
         document.getElementById('tab-btn-game-manual').classList.add('active');
 
-        document.getElementById('tab-btn-app').innerText = 'Apps';
-        document.getElementById('app-heading').innerText = 'Game Management System';
-        document.getElementById('app-desc').innerText = 'Launch the digital scoreboard and game management console.';
-        document.getElementById('app-link-anchor').innerText = 'LAUNCH SCOREBOARD ➔';
-
         buildGallery('game-manual', 'wrapper-game-manual', project.gameManualImages, project.gameManualPdf, 'No Game Manual files found.', 'fs-btn-game-manual');
         buildGallery('apps-manual', 'wrapper-apps-manual', project.appsManualImages, project.appsManualPdf, 'No Apps Manual files found.', 'fs-btn-apps-manual');
 
@@ -292,7 +289,6 @@
         stlList.innerHTML = '';
         project.stlFiles.forEach((file, index) => {
           const containerId = 'stl-preview-' + index;
-          // 🌟 UPDATED REPO URL BACK TO UPPERCASE MakerPortal
           const githubPreviewUrl = "https://shukri-ahmad.github.io/MakerPortal/models/" + encodeURIComponent(file.name);
           stlList.innerHTML += `
             <div class="list-item" style="flex-direction: column; align-items: stretch; padding: 15px;">
@@ -308,6 +304,7 @@
         });
       } else { stlList.innerHTML = '<div style="color: #9ca3af;">No 3D models found.</div>'; }
 
+      // 🌟 UPDATED: Dynamic MakeCode Tab Recognition for "Host"
       const mkTabsWrapper = document.getElementById('makecode-tabs-wrapper');
       const mkContentsWrapper = document.getElementById('makecode-contents-wrapper');
       let makecodeData = project.makecodeLinks;
@@ -320,6 +317,7 @@
           let tabTitle = 'MakeCode';
           if (lowerName.includes('robot')) tabTitle = 'MakeCode Robot';
           else if (lowerName.includes('remote')) tabTitle = 'MakeCode Remote';
+          else if (lowerName.includes('host')) tabTitle = 'MakeCode Host'; // 🌟 RECOGNIZES HOST
           else if (makecodeData.length > 1) tabTitle = `MakeCode ${index + 1}`;
 
           const tabId = `makecode-dynamic-${index}`;
@@ -358,9 +356,53 @@
         mkContentsWrapper.appendChild(content);
       }
 
-      if (project.appLink && project.appLink.includes("http")) {
+      // 🌟 UPDATED: Dynamic multi-app control layout
+      const appLinksData = project.appLinks && project.appLinks.length > 0 ? project.appLinks : [];
+      if (appLinksData.length === 0 && project.appLink && project.appLink.includes("http")) {
+         appLinksData.push({ name: 'Control App', url: project.appLink }); // Fallback
+      }
+
+      if (appLinksData.length > 0) {
         document.getElementById('tab-btn-app').style.display = 'inline-block';
-        document.getElementById('app-link-anchor').href = project.appLink;
+        
+        let heading = isGame ? 'Game Management System' : 'Ready to Drive?';
+        let desc = isGame ? 'Launch the digital scoreboard and game management console.' : 'Launch the Web Bluetooth controller to take command of your robot.';
+        
+        const hasHost = appLinksData.some(a => a.name.toLowerCase().includes('host'));
+        const hasPublic = appLinksData.some(a => a.name.toLowerCase().includes('public'));
+        
+        if (!isGame && (appLinksData.length > 1 || hasHost || hasPublic)) {
+          heading = 'System Web Applications';
+          desc = 'Launch the connected web interfaces for this project.';
+          document.getElementById('tab-btn-app').innerText = 'Apps';
+        } else if (isGame) {
+          document.getElementById('tab-btn-app').innerText = 'Apps';
+        }
+
+        document.getElementById('app-heading').innerText = heading;
+        document.getElementById('app-desc').innerText = desc;
+
+        const container = document.getElementById('app-links-container');
+        container.innerHTML = '';
+
+        appLinksData.forEach(link => {
+          let btnText = 'LAUNCH APP ➔';
+          let lowerName = link.name.toLowerCase();
+          
+          if (lowerName.includes('host')) btnText = 'LAUNCH HOST WEBAPP ➔';
+          else if (lowerName.includes('public')) btnText = 'LAUNCH PUBLIC WEBAPP ➔';
+          else if (isGame) btnText = 'LAUNCH SCOREBOARD ➔';
+          else if (appLinksData.length === 1) btnText = 'LAUNCH CONTROL APP ➔';
+          else {
+             let cleanName = link.name.replace(/\.[^/.]+$/, "").toUpperCase();
+             btnText = `LAUNCH ${cleanName} ➔`;
+          }
+          
+          const urlMatch = link.url.match(/https?:\/\/[^\s]+/);
+          const finalUrl = urlMatch ? urlMatch[0] : link.url;
+
+          container.innerHTML += `<a href="${finalUrl}" target="_blank" class="app-launch-btn" style="width: 100%; max-width: 350px;">${btnText}</a>`;
+        });
       }
     };
   </script>
